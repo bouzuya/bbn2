@@ -1,0 +1,13 @@
+[package]
+name = "bbn-data"
+authors = ["bouzuya <m@bouzuya.net>"]
+edition = "2021"
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+chrono = { workspace = true }
+date-range = { workspace = true }
+hatena-blog-api = { workspace = true }
+limited-date-time = { git = "https://github.com/bouzuya/rust-limited-date-time", tag = "0.17.0" }
+thiserror = { workspace = true }
