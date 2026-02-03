@@ -12,3 +12,9 @@ $ chmod +x "${name}"
 $ ${name} --version
 bbn 0.8.0
 ```
+
+## Note
+
+```
+curl -fsSL https://claude.ai/install.sh | bash
+```
