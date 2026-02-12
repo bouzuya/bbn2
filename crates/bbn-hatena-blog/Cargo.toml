@@ -1,7 +1,7 @@
 [package]
 name = "bbn-hatena-blog"
 authors = ["bouzuya <m@bouzuya.net>"]
-edition = "2021"
+edition = "2024"
 publish = false
 
 [dependencies]
