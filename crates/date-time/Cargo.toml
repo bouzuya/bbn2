@@ -1,0 +1,11 @@
+[package]
+name = "date-time"
+authors = ["bouzuya <m@bouzuya.net>"]
+edition = "2024"
+publish = false
+
+[dependencies]
+chrono = "0.4.43"
+
+[dev-dependencies]
+anyhow = { workspace = true }
