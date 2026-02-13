@@ -1,7 +1,7 @@
 use anyhow::Context;
 use bbn_data::EntryKey;
 use bbn_repository::{BbnRepository, Query};
-use pulldown_cmark::{html, Parser};
+use pulldown_cmark::{Parser, html};
 use regex::Regex;
 use std::{
     collections::{BTreeMap, BTreeSet},
