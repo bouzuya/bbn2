@@ -8,20 +8,16 @@
 	},
 	"dockerComposeFile": "../compose.yaml",
 	"features": {
-		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"username": "vscode",
 			"uid": 1000,
 			"gid": 1000
 		},
 		"ghcr.io/devcontainers/features/copilot-cli:1": {},
-		// for claude-code feature
-		"ghcr.io/devcontainers/features/node:1": {
-			"installYarnUsingApt": false
-		},
 		"ghcr.io/devcontainers/features/rust:1": {}
 	},
 	"name": "bbn2",
+	"postCreateCommand": ".devcontainer/post-create.sh",
 	"remoteUser": "vscode",
 	"service": "workspace",
 	"workspaceFolder": "/workspaces/bbn2"
