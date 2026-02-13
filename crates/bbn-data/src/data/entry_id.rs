@@ -10,21 +10,21 @@ pub struct EntryId {
 
 #[derive(Debug, thiserror::Error)]
 #[error("parse entry id")]
-pub struct ParseEntryId;
+pub struct EntryIdError;
 
 impl std::str::FromStr for EntryId {
-    type Err = ParseEntryId;
+    type Err = EntryIdError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(if s.len() == 10 {
             Self {
-                date: Date::from_str(s).map_err(|_| ParseEntryId)?,
+                date: Date::from_str(s).map_err(|_| EntryIdError)?,
                 id_title: None,
             }
         } else {
             Self {
                 date: Date::from_str(&s.chars().take(10).collect::<String>())
-                    .map_err(|_| ParseEntryId)?,
+                    .map_err(|_| EntryIdError)?,
                 id_title: Some(s.chars().skip(11).collect::<String>()),
             }
         })
