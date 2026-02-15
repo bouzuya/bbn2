@@ -538,7 +538,6 @@ dependencies = [
 [[package]]
 name = "date-range"
 version = "0.3.0"
-source = "git+https://github.com/bouzuya/rust-sandbox?rev=f89152a80a4051b7b0164e2917e76a040cf80c0e#f89152a80a4051b7b0164e2917e76a040cf80c0e"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1195,13 +1194,14 @@ checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 [[package]]
 name = "markdown-link-helper"
 version = "0.3.2"
-source = "git+https://github.com/bouzuya/rust-sandbox?rev=f89152a80a4051b7b0164e2917e76a040cf80c0e#f89152a80a4051b7b0164e2917e76a040cf80c0e"
 dependencies = [
  "anyhow",
+ "assert_cmd",
  "clap 4.5.20",
  "pulldown-cmark",
  "regex",
  "serde_json",
+ "tempfile",
  "thiserror",
 ]
 
