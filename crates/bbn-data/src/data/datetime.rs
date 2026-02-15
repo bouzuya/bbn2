@@ -67,6 +67,46 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_local_from_timestamp_roundtrip() -> anyhow::Result<()> {
+        // タイムスタンプからの変換後、Timestamp に戻すと元の値と一致する
+        let ts = Timestamp::try_from(1612369038_i64)?;
+        let dt = DateTime::local_from_timestamp(ts);
+        assert_eq!(Timestamp::from(dt), ts);
+        Ok(())
+    }
+
+    #[test]
+    fn test_local_from_timestamp_seconds_precision() -> anyhow::Result<()> {
+        // 秒精度であること（サブ秒部分が0）
+        let ts = Timestamp::try_from(1612369038_i64)?;
+        let dt = DateTime::local_from_timestamp(ts);
+        assert_eq!(dt.0.nanosecond(), 0);
+        Ok(())
+    }
+
+    #[test]
+    fn test_local_from_timestamp_epoch() -> anyhow::Result<()> {
+        let ts = Timestamp::try_from(0_i64)?;
+        let dt = DateTime::local_from_timestamp(ts);
+        assert_eq!(Timestamp::from(dt), ts);
+        Ok(())
+    }
+
+    #[test]
+    fn test_local_from_timestamp_display_format() -> anyhow::Result<()> {
+        // 表示形式が秒精度の RFC 3339 であること
+        let ts = Timestamp::try_from(1612369038_i64)?;
+        let dt = DateTime::local_from_timestamp(ts);
+        let s = dt.to_string();
+        // "YYYY-MM-DDTHH:MM:SS" の後に "Z" または "+HH:MM" / "-HH:MM" が続く
+        assert!(s.len() == 20 || s.len() == 25);
+        assert!(s.contains('T'));
+        // 小数点が含まれないこと
+        assert!(!s.contains('.'));
+        Ok(())
+    }
+
+    #[test]
     fn string_conversion_test() {
         let f = DateTime::from_str;
         let g = |dt: DateTime| dt.to_string();
