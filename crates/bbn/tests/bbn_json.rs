@@ -48,7 +48,7 @@ fn test_bbn_json() -> anyhow::Result<()> {
     fs::create_dir_all(out_dir.as_path())?;
 
     Command::cargo_bin("bbn")?
-        .arg("json")
+        .arg("build-json")
         .arg(out_dir.as_path())
         .env("BBN_TEST_CONFIG_DIR", config_dir)
         .assert()
