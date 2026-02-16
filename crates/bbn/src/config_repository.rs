@@ -131,6 +131,8 @@ impl ConfigRepository {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     use tempfile::tempdir;
 
     #[test]
@@ -149,10 +151,6 @@ mod tests {
                 r#"{{"hatena_api_key":"{hatena_api_key}","hatena_blog_id":"{hatena_blog_id}","hatena_id":"{hatena_id}"}}"#
             ),
         )?;
-        env::set_var(
-            "BBN_TEST_CONFIG_DIR",
-            config_dir.to_str().context("config dir is not UTF-8")?,
-        );
 
         let credentials = Credentials::new(
             hatena_api_key.to_string(),
@@ -160,14 +158,19 @@ mod tests {
             hatena_id.to_string(),
         );
 
-        let repository = ConfigRepository::new()?;
-        let loaded = repository.load_credentials()?;
-        assert_eq!(loaded, credentials);
+        temp_env::with_var(
+            "BBN_TEST_CONFIG_DIR",
+            Some(config_dir.to_str().context("config dir is not UTF-8")?),
+            || -> anyhow::Result<()> {
+                let repository = ConfigRepository::new()?;
+                let loaded = repository.load_credentials()?;
+                assert_eq!(loaded, credentials);
 
-        assert_eq!(repository.credential_file_path()?, credential_file);
-        Ok(())
+                assert_eq!(repository.credential_file_path()?, credential_file);
+                Ok(())
+            },
+        )
     }
-    use super::*;
 
     #[test]
     fn repository_test() -> anyhow::Result<()> {
@@ -181,37 +184,40 @@ mod tests {
         let config_dir = temp_dir.path().join("config");
         fs::create_dir_all(config_dir.as_path())?;
         let config_file = config_dir.join("config.json");
-        env::set_var(
-            "BBN_TEST_CONFIG_DIR",
-            config_dir.to_str().context("config dir is not UTF-8")?,
-        );
 
         let config = Config::new(
             data_dir.clone(),
             hatena_blog_data_file.clone(),
             Some(link_completion_rules_file.clone()),
         );
-        let repository = ConfigRepository::new()?;
-        repository.save(config.clone())?;
-        let loaded = repository.load()?;
-        assert_eq!(loaded, config);
 
-        let saved = fs::read_to_string(config_file.as_path())?;
-        assert_eq!(
-            saved,
-            format!(
-                r#"{{"data_dir":"{}","hatena_blog_data_file":"{}","link_completion_rules_file":"{}"}}"#,
-                data_dir.to_str().context("data_dir.to_str()")?,
-                hatena_blog_data_file
-                    .to_str()
-                    .context("hatena_blog_data_file.to_str()")?,
-                link_completion_rules_file
-                    .to_str()
-                    .context("link_completion_rules_file.to_str()")?
-            )
-        );
+        temp_env::with_var(
+            "BBN_TEST_CONFIG_DIR",
+            Some(config_dir.to_str().context("config dir is not UTF-8")?),
+            || -> anyhow::Result<()> {
+                let repository = ConfigRepository::new()?;
+                repository.save(config.clone())?;
+                let loaded = repository.load()?;
+                assert_eq!(loaded, config);
 
-        assert_eq!(repository.path()?, config_file);
-        Ok(())
+                let saved = fs::read_to_string(config_file.as_path())?;
+                assert_eq!(
+                    saved,
+                    format!(
+                        r#"{{"data_dir":"{}","hatena_blog_data_file":"{}","link_completion_rules_file":"{}"}}"#,
+                        data_dir.to_str().context("data_dir.to_str()")?,
+                        hatena_blog_data_file
+                            .to_str()
+                            .context("hatena_blog_data_file.to_str()")?,
+                        link_completion_rules_file
+                            .to_str()
+                            .context("link_completion_rules_file.to_str()")?
+                    )
+                );
+
+                assert_eq!(repository.path()?, config_file);
+                Ok(())
+            },
+        )
     }
 }
