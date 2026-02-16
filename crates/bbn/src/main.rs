@@ -19,13 +19,15 @@ struct Opt {
 
 #[derive(Debug, clap::Subcommand)]
 enum Subcommand {
+    #[command(name = "build-html", about = "Builds HTML files")]
+    BuildHtml { out_dir: PathBuf },
+    #[command(name = "build-json", about = "Builds JSON files")]
+    BuildJson { out_dir: PathBuf },
     #[command(name = "completion", about = "Prints the shell's completion script")]
     Completion {
         #[arg(name = "SHELL", help = "the shell", value_enum)]
         shell: Shell,
     },
-    #[command(name = "build-html", about = "Builds HTML files")]
-    BuildHtml { out_dir: PathBuf },
     #[command(name = "config", about = "Updates the configuration file")]
     Config {
         #[arg(long = "data-dir", name = "DATA_DIR", help = "the data dir")]
@@ -49,8 +51,6 @@ enum Subcommand {
         #[command(subcommand)]
         subcommand: HatenaBlogSubcommand,
     },
-    #[command(name = "build-json", about = "Builds JSON files")]
-    BuildJson { out_dir: PathBuf },
     #[command(name = "link-completion", about = "Completes links")]
     LinkCompletion {
         #[arg(name = "DATE_LIKE", help = "the date. e.g. 2021-02-03 or 2021-W05-3")]
@@ -127,12 +127,13 @@ pub enum HatenaBlogSubcommand {
 async fn main() -> anyhow::Result<()> {
     let opt = <Opt as clap::Parser>::parse();
     match opt.subcommand {
+        Subcommand::BuildHtml { out_dir } => command::build_html(out_dir),
+        Subcommand::BuildJson { out_dir } => command::build_json(out_dir),
         Subcommand::Completion { shell } => {
             let mut command = <Opt as clap::CommandFactory>::command();
             generate(shell, &mut command, "bbn", &mut io::stdout());
             Ok(())
         }
-        Subcommand::BuildHtml { out_dir } => command::build_html(out_dir),
         Subcommand::Config {
             data_dir,
             hatena_blog_data_file,
@@ -158,7 +159,6 @@ async fn main() -> anyhow::Result<()> {
                 web,
             } => command::hatena_blog::view(content, date, hatena_blog_id, meta, web).await,
         },
-        Subcommand::BuildJson { out_dir } => command::build_json(out_dir),
         Subcommand::LinkCompletion { date_like } => {
             command::link_completion::run(command::link_completion::Params { date_like })
         }
