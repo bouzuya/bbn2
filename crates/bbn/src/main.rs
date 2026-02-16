@@ -25,7 +25,7 @@ enum Subcommand {
         shell: Shell,
     },
     #[command(name = "build-html", about = "Builds HTML files")]
-    BuildHtml,
+    BuildHtml { out_dir: PathBuf },
     #[command(name = "config", about = "Updates the configuration file")]
     Config {
         #[arg(long = "data-dir", name = "DATA_DIR", help = "the data dir")]
@@ -132,7 +132,7 @@ async fn main() -> anyhow::Result<()> {
             generate(shell, &mut command, "bbn", &mut io::stdout());
             Ok(())
         }
-        Subcommand::BuildHtml => command::build_html(),
+        Subcommand::BuildHtml { out_dir } => command::build_html(out_dir),
         Subcommand::Config {
             data_dir,
             hatena_blog_data_file,
