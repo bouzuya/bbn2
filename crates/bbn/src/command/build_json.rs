@@ -87,6 +87,42 @@ fn write_daily_json(out_dir: &Path, daily_json: &DailyJson) -> anyhow::Result<()
     Ok(())
 }
 
+// <https://github.com/bouzuya/kraken/tree/v4.0.2/doc#related-json>
+// related json (`/YYYY/MM/DD/related.json`)
+#[derive(serde::Serialize)]
+pub struct RelatedJson {
+    pub inbound: Vec<String>,
+    pub next: Vec<String>,
+    pub outbound: Vec<String>,
+    pub prev: Vec<String>,
+    pub same: Vec<String>,
+}
+
+fn write_related_json(
+    out_dir: &Path,
+    date: &str,
+    related_json: &RelatedJson,
+) -> anyhow::Result<()> {
+    let parts = date.split('-').collect::<Vec<&str>>();
+    let yyyy = parts[0];
+    let mm = parts[1];
+    let dd = parts[2];
+    let file_names = vec![
+        format!("{yyyy}/{mm}/{dd}/related.json"),
+        format!("{yyyy}/{mm}/{dd}/related/index.json"),
+    ];
+    for file_name in file_names {
+        let path = out_dir.join(file_name);
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        let file = File::create(path)?;
+        let writer = BufWriter::new(file);
+        serde_json::to_writer(writer, related_json)?;
+    }
+    Ok(())
+}
+
 fn write_linked_json(
     out_dir: &Path,
     inbounds: &BTreeMap<EntryKey, BTreeSet<EntryKey>>,
@@ -210,6 +246,71 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
     );
 
     let all_json = AllJson(all_json_items);
+
+    // related.json の出力
+    let dates = all_json
+        .0
+        .iter()
+        .map(|item| item.date.clone())
+        .collect::<Vec<_>>();
+    for (i, item) in all_json.0.iter().enumerate() {
+        let date = &item.date;
+        let date_key =
+            date_range::date::Date::from_str(date).context("related.json: 日付のパースに失敗")?;
+
+        // inbound: この日付へのリンクを持つエントリ
+        let inbound = inbounds
+            .get(&date_key)
+            .map(|set| set.iter().map(|d| d.to_string()).collect::<Vec<_>>())
+            .unwrap_or_default();
+
+        // outbound: このエントリがリンクしているエントリ
+        let outbound = outbounds
+            .get(&date_key)
+            .map(|set| set.iter().map(|d| d.to_string()).collect::<Vec<_>>())
+            .unwrap_or_default();
+
+        // next: この後の最大4件（降順）
+        let next = dates[i + 1..]
+            .iter()
+            .take(4)
+            .rev()
+            .cloned()
+            .collect::<Vec<_>>();
+
+        // prev: この前の最大4件
+        let prev = dates[..i]
+            .iter()
+            .rev()
+            .take(4)
+            .cloned()
+            .collect::<Vec<_>>();
+
+        // same: 同じ月日のエントリ（自分自身を除く）
+        let mmdd = format!(
+            "--{}-{}",
+            date_key.month(),
+            date_key.day_of_month()
+        );
+        let same = same_days
+            .get(&mmdd)
+            .map(|set| {
+                set.iter()
+                    .filter(|d| *d != &date_key)
+                    .map(|d| d.to_string())
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
+
+        let related_json = RelatedJson {
+            inbound,
+            next,
+            outbound,
+            prev,
+            same,
+        };
+        write_related_json(out_dir.as_path(), date, &related_json)?;
+    }
 
     fs::create_dir_all(out_dir.as_path())?;
     write_all_json(out_dir.as_path(), &all_json)?;
