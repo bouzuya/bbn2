@@ -6,13 +6,13 @@ mod credentials;
 mod date_like;
 
 pub use bbn_date_range::bbn_date_range;
-use clap_complete::{generate, Shell};
+use clap_complete::{Shell, generate};
 use date_like::DateLike;
 use date_range::date::Date;
 use std::{io, path::PathBuf};
 
 #[derive(Debug, clap::Parser)]
-struct Opt {
+struct Command {
     #[command(subcommand)]
     subcommand: Subcommand,
 }
@@ -125,12 +125,12 @@ pub enum HatenaBlogSubcommand {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let opt = <Opt as clap::Parser>::parse();
-    match opt.subcommand {
+    let command = <Command as clap::Parser>::parse();
+    match command.subcommand {
         Subcommand::BuildHtml { out_dir } => command::build_html(out_dir),
         Subcommand::BuildJson { out_dir } => command::build_json(out_dir),
         Subcommand::Completion { shell } => {
-            let mut command = <Opt as clap::CommandFactory>::command();
+            let mut command = <Command as clap::CommandFactory>::command();
             generate(shell, &mut command, "bbn", &mut io::stdout());
             Ok(())
         }

@@ -279,19 +279,10 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             .collect::<Vec<_>>();
 
         // prev: この前の最大4件
-        let prev = dates[..i]
-            .iter()
-            .rev()
-            .take(4)
-            .cloned()
-            .collect::<Vec<_>>();
+        let prev = dates[..i].iter().rev().take(4).cloned().collect::<Vec<_>>();
 
         // same: 同じ月日のエントリ（自分自身を除く）
-        let mmdd = format!(
-            "--{}-{}",
-            date_key.month(),
-            date_key.day_of_month()
-        );
+        let mmdd = format!("--{}-{}", date_key.month(), date_key.day_of_month());
         let same = same_days
             .get(&mmdd)
             .map(|set| {
