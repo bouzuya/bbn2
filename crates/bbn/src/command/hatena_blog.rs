@@ -12,15 +12,15 @@ pub struct Command {
 
 #[derive(Debug, clap::Subcommand)]
 enum Subcommand {
-    #[command(name = "diff", about = "diff")]
+    /// Diffs the local and remote blog posts
     Diff(diff::Command),
-    #[command(name = "download", about = "Download to the hatena blog")]
+    /// Downloads the blog posts from the Hatena Blog
     Download(download::Command),
-    #[command(name = "list")]
+    /// Lists the blog posts
     List(list::Command),
-    #[command(name = "upload", about = "Upload to the hatena blog")]
+    /// Uploads the blog posts to the Hatena Blog
     Upload(upload::Command),
-    #[command(name = "view", about = "view")]
+    /// Views the blog posts
     View(view::Command),
 }
 

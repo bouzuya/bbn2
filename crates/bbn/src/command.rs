@@ -17,25 +17,25 @@ pub struct Command {
 
 #[derive(Debug, clap::Subcommand)]
 enum Subcommand {
-    #[command(name = "build-html", about = "Builds HTML files")]
+    /// Builds HTML files
     BuildHtml(build_html::Command),
-    #[command(name = "build-json", about = "Builds JSON files")]
+    /// Builds JSON files
     BuildJson(build_json::Command),
-    #[command(name = "completion", about = "Prints the shell's completion script")]
+    /// Prints the shell's completion script
     Completion(completion::Command),
-    #[command(name = "config", about = "Updates the configuration file")]
+    /// Updates the configuration file
     Config(config::Command),
-    #[command(name = "date-range", about = "Prints the date range")]
+    /// Prints the date range
     DateRange(date_range::Command),
-    #[command(name = "hatena-blog", about = "hatena-blog")]
+    /// Manages Hatena Blog posts
     HatenaBlog(hatena_blog::Command),
-    #[command(name = "link-completion", about = "Completes links")]
+    /// Completes links
     LinkCompletion(link_completion::Command),
-    #[command(name = "list", about = "Lists the blog posts")]
+    /// Lists the blog posts
     List(list::Command),
-    #[command(name = "sitemap-xml", about = "...")]
+    /// Builds sitemap.xml
     SitemapXml(sitemap_xml::Command),
-    #[command(name = "view", about = "Views the blog post")]
+    /// Views the blog post
     View(view::Command),
 }
 
