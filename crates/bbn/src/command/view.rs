@@ -1,4 +1,18 @@
 use crate::{config_repository::ConfigRepository, date_like::DateLike};
+
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    #[arg(long = "content", help = "Prints the contents of the entry")]
+    pub content: bool,
+    #[arg(name = "DATE_LIKE", help = "the date. e.g. 2021-02-03 or 2021-W05-3")]
+    pub date_like: DateLike,
+    #[arg(long = "json", help = "Prints in the JSON format")]
+    pub json: bool,
+    #[arg(long = "meta", help = "Prints the meta data of the entry")]
+    pub meta: bool,
+    #[arg(long = "web", help = "Open the entry in the browser")]
+    pub web: bool,
+}
 use anyhow::Context;
 use bbn_data::{EntryId, EntryMeta};
 use bbn_repository::BbnRepository;
@@ -113,7 +127,13 @@ fn entry_url(entry_id: &EntryId) -> String {
     )
 }
 
-pub fn view(
+impl Command {
+    pub fn handle(self) -> anyhow::Result<()> {
+        view(self.date_like, self.content, self.json, self.meta, self.web)
+    }
+}
+
+fn view(
     date_like: DateLike,
     content: bool,
     json: bool,

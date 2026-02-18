@@ -5,11 +5,19 @@ use date_range::date::Date;
 
 use crate::config_repository::ConfigRepository;
 
-pub struct Params {
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    #[arg(name = "DATE_LIKE", help = "the date. e.g. 2021-02-03 or 2021-W05-3")]
     pub date_like: DateLike,
 }
 
-pub fn run(Params { date_like }: Params) -> anyhow::Result<()> {
+impl Command {
+    pub fn handle(self) -> anyhow::Result<()> {
+        run(self)
+    }
+}
+
+fn run(Command { date_like }: Command) -> anyhow::Result<()> {
     let config_repository = ConfigRepository::new()?;
     let config = config_repository.load()?;
     let data_dir = config.data_dir().to_path_buf();

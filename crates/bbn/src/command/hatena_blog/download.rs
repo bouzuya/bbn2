@@ -11,6 +11,20 @@ use hatena_blog_api::{Entry, GetEntryResponse};
 use std::{collections::BTreeSet, convert::TryFrom, str::FromStr, time::Duration};
 use tokio::time::sleep;
 
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    #[arg(long = "data-file-only")]
+    pub data_file_only: bool,
+    #[arg(name = "DATE")]
+    pub date: Option<Date>,
+}
+
+impl Command {
+    pub async fn handle(self) -> anyhow::Result<()> {
+        download(self.data_file_only, self.date).await
+    }
+}
+
 async fn indexing(
     hatena_blog_repository: &HatenaBlogRepository,
     hatena_blog_client: &HatenaBlogClient,
@@ -244,7 +258,7 @@ async fn download_impl(
     }
 }
 
-pub async fn download(data_file_only: bool, date: Option<Date>) -> anyhow::Result<()> {
+async fn download(data_file_only: bool, date: Option<Date>) -> anyhow::Result<()> {
     let config_repository = ConfigRepository::new()?;
     let config = config_repository
         .load()

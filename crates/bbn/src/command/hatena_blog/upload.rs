@@ -8,7 +8,23 @@ use crate::config_repository::ConfigRepository;
 use bbn_hatena_blog::{upload_entry, HatenaBlogClient, HatenaBlogRepository};
 use bbn_repository::{BbnRepository, Query};
 
-pub async fn upload(date: Option<Date>, draft: bool, interactive: bool) -> anyhow::Result<()> {
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    #[arg(name = "DATE", help = "date")]
+    pub date: Option<Date>,
+    #[arg(long = "draft")]
+    pub draft: bool,
+    #[arg(long = "interactive")]
+    pub interactive: bool,
+}
+
+impl Command {
+    pub async fn handle(self) -> anyhow::Result<()> {
+        upload(self.date, self.draft, self.interactive).await
+    }
+}
+
+async fn upload(date: Option<Date>, draft: bool, interactive: bool) -> anyhow::Result<()> {
     let config_repository = ConfigRepository::new()?;
     let config = config_repository
         .load()

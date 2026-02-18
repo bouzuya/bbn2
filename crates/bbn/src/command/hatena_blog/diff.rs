@@ -5,7 +5,19 @@ use bbn_hatena_blog::HatenaBlogRepository;
 use bbn_repository::{BbnRepository, Query};
 use std::convert::TryFrom;
 
-pub async fn diff(date: Option<String>) -> anyhow::Result<()> {
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    #[arg(name = "DATE", help = "the entry id")]
+    pub date: Option<String>,
+}
+
+impl Command {
+    pub async fn handle(self) -> anyhow::Result<()> {
+        diff(self.date).await
+    }
+}
+
+async fn diff(date: Option<String>) -> anyhow::Result<()> {
     let config_repository = ConfigRepository::new()?;
     let config = config_repository
         .load()

@@ -1,12 +1,23 @@
 use std::{fs::File, io::BufWriter, path::PathBuf};
 
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    pub out_dir: PathBuf,
+}
+
 use anyhow::Context;
 use bbn_repository::{BbnRepository, Query};
 use sitemap_xml_writer::{SitemapWriter, Url};
 
 use crate::config_repository::ConfigRepository;
 
-pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
+impl Command {
+    pub fn handle(self) -> anyhow::Result<()> {
+        run(self.out_dir)
+    }
+}
+
+fn run(out_dir: PathBuf) -> anyhow::Result<()> {
     let config_repository = ConfigRepository::new()?;
     let config = config_repository
         .load()

@@ -1,11 +1,28 @@
 use anyhow::Context;
 
 use crate::config_repository::ConfigRepository;
+
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    #[arg(long = "json", help = "json")]
+    pub json: bool,
+    #[arg(
+        name = "query",
+        help = "query. e.g. date:2021 or date:2021-02 or date:2021-02-03 or date:--02-03 or date:---03"
+    )]
+    pub query: Option<String>,
+}
 use bbn_data::EntryId;
 use bbn_repository::{BbnRepository, Query};
 use std::convert::TryFrom;
 
-pub fn list(json: bool, query: Option<String>) -> anyhow::Result<()> {
+impl Command {
+    pub fn handle(self) -> anyhow::Result<()> {
+        list(self.json, self.query)
+    }
+}
+
+fn list(json: bool, query: Option<String>) -> anyhow::Result<()> {
     #[derive(serde::Serialize)]
     struct OutputJson {
         date: String,

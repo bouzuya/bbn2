@@ -3,7 +3,16 @@ use anyhow::Context;
 use crate::config_repository::ConfigRepository;
 use bbn_hatena_blog::HatenaBlogRepository;
 
-pub async fn list() -> anyhow::Result<()> {
+#[derive(Debug, clap::Args)]
+pub struct Command {}
+
+impl Command {
+    pub async fn handle(self) -> anyhow::Result<()> {
+        list().await
+    }
+}
+
+async fn list() -> anyhow::Result<()> {
     let config_repository = ConfigRepository::new()?;
     let config = config_repository
         .load()

@@ -8,7 +8,16 @@ use std::{
     convert::TryFrom,
     fs::{self, File},
     io::BufWriter,
-    path::{Path, PathBuf},
+    path::PathBuf,
+};
+
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    pub out_dir: PathBuf,
+}
+
+use std::{
+    path::Path,
     str::FromStr,
 };
 
@@ -165,7 +174,13 @@ fn parse_links(markdown: &str) -> anyhow::Result<BTreeSet<EntryKey>> {
     Ok(links)
 }
 
-pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
+impl Command {
+    pub fn handle(self) -> anyhow::Result<()> {
+        run(self.out_dir)
+    }
+}
+
+fn run(out_dir: PathBuf) -> anyhow::Result<()> {
     let config_repository = ConfigRepository::new()?;
     let config = config_repository
         .load()

@@ -6,7 +6,27 @@ use crate::config_repository::ConfigRepository;
 use bbn_hatena_blog::HatenaBlogRepository;
 use bbn_repository::BbnRepository;
 
-pub async fn view(
+#[derive(Debug, clap::Args)]
+pub struct Command {
+    #[arg(long = "content")]
+    pub content: bool,
+    #[arg(name = "DATE", help = "the entry id")]
+    pub date: Date,
+    #[arg(long = "hatena-blog-id", env = "HATENA_BLOG_ID")]
+    pub hatena_blog_id: String,
+    #[arg(long = "meta")]
+    pub meta: bool,
+    #[arg(long = "web", help = "Open the entry in the browser")]
+    pub web: bool,
+}
+
+impl Command {
+    pub async fn handle(self) -> anyhow::Result<()> {
+        view(self.content, self.date, self.hatena_blog_id, self.meta, self.web).await
+    }
+}
+
+async fn view(
     content: bool,
     date: Date,
     hatena_blog_id: String,
