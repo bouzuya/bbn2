@@ -1,4 +1,4 @@
-use crate::DateLike;
+use crate::date_like::DateLike;
 use anyhow::Context;
 use bbn_repository::BbnRepository;
 use date_range::date::Date;
