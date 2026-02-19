@@ -41,7 +41,7 @@ impl Command {
         match self.subcommand {
             Subcommand::Build(command) => command.handle(),
             Subcommand::Completion(command) => command.handle::<Command>(),
-            Subcommand::Config(command) => command.handle(),
+            Subcommand::Config(command) => command.handle().await,
             Subcommand::DateRange(command) => command.handle(),
             Subcommand::HatenaBlog(command) => command.handle().await,
             Subcommand::LinkCompletion(command) => command.handle(),

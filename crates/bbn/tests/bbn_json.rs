@@ -39,6 +39,7 @@ fn test_bbn_json() -> anyhow::Result<()> {
     let hatena_blog_data_file = temp_dir.path().join("hatena-blog.db");
     Command::cargo_bin("bbn")?
         .arg("config")
+        .arg("init")
         .arg("--data-dir")
         .arg(data_dir)
         .arg("--hatena-blog-data-file")
