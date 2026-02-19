@@ -17,7 +17,7 @@ bbn は blog.bouzuya.net を管理するための CLI ツールです。ブロ�
 cargo build                    # 全クレートをビルド
 cargo test                     # 全テストを実行
 cargo test -p bbn              # 特定クレートのテストを実行
-cargo fmt                      # コードフォーマット
+cargo +nightly fmt             # コードフォーマット
 cargo clippy                   # リント
 ```
 
@@ -40,6 +40,7 @@ cargo clippy                   # リント
 - 非同期: I/O 操作 (API 呼び出し、ファイル操作) には tokio ランタイム
 - パース: 日付/クエリ DSL には nom パーサーコンビネータ
 - 設定: `xdg` クレートによる XDG 準拠の設定パス
+- `{mod_name}/mod.rs` を使用せず `{mod_name}.rs` を使用する
 
 ## 外部依存関係
 
