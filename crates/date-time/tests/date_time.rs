@@ -1,6 +1,7 @@
 use std::time::Duration;
 
-use date_time::{DateTime, ParseDateTimeError};
+use date_time::DateTime;
+use date_time::ParseDateTimeError;
 
 #[test]
 fn test_from_unix_timestamp_and_display() -> anyhow::Result<()> {

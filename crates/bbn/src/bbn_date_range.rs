@@ -1,8 +1,10 @@
-use date_range::{date::Date, week_date::WeekDate};
-use nom::{
-    bytes::complete::take_while_m_n, character::complete::char, combinator::all_consuming,
-    sequence::separated_pair, IResult,
-};
+use date_range::date::Date;
+use date_range::week_date::WeekDate;
+use nom::IResult;
+use nom::bytes::complete::take_while_m_n;
+use nom::character::complete::char;
+use nom::combinator::all_consuming;
+use nom::sequence::separated_pair;
 use thiserror::Error;
 
 fn is_digit(c: char) -> bool {

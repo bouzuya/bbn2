@@ -1,7 +1,11 @@
 use std::convert::TryFrom;
 use thiserror::Error;
 
-use super::{DayOfWeek, ParseWeekError, ParseWeekYearError, Week, WeekYear};
+use super::DayOfWeek;
+use super::ParseWeekError;
+use super::ParseWeekYearError;
+use super::Week;
+use super::WeekYear;
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct YearWeek {

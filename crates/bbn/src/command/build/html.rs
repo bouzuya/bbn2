@@ -1,9 +1,10 @@
 use anyhow::Context;
-use std::{
-    fs::{self, File},
-    io::{BufReader, Write},
-    path::{Path, PathBuf},
-};
+use std::fs::File;
+use std::fs::{self};
+use std::io::BufReader;
+use std::io::Write;
+use std::path::Path;
+use std::path::PathBuf;
 
 #[derive(serde::Deserialize)]
 struct PostEntry {
@@ -108,11 +109,7 @@ fn render_entry_detail_content(detail: &EntryDetail, date: &DateParts) -> String
     )
 }
 
-fn render_entry_list_content(
-    entries: &[&PostEntry],
-    list_title: &str,
-    list_url: &str,
-) -> String {
+fn render_entry_list_content(entries: &[&PostEntry], list_title: &str, list_url: &str) -> String {
     let mut items = String::new();
     for entry in entries {
         let date = parse_date(&entry.date).unwrap();
@@ -132,7 +129,13 @@ fn render_entry_list_content(
     )
 }
 
-fn render_page(title: &str, canonical_url: &str, description: &str, nav: &str, content: &str) -> String {
+fn render_page(
+    title: &str,
+    canonical_url: &str,
+    description: &str,
+    nav: &str,
+    content: &str,
+) -> String {
     format!(
         r##"<!DOCTYPE html>
 <html lang="ja" prefix="og: http://ogp.me/ns#">
@@ -181,7 +184,9 @@ fn render_page(title: &str, canonical_url: &str, description: &str, nav: &str, c
 fn write_html(out_dir: &Path, path: &str, html: &str) -> anyhow::Result<()> {
     // path は "/" で始まり "/" で終わる想定
     // index.html を出力
-    let index_path = out_dir.join(path.trim_start_matches('/')).join("index.html");
+    let index_path = out_dir
+        .join(path.trim_start_matches('/'))
+        .join("index.html");
     if let Some(parent) = index_path.parent() {
         fs::create_dir_all(parent)?;
     }
@@ -202,7 +207,10 @@ fn write_html(out_dir: &Path, path: &str, html: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn get_page_entries<'a>(entries: &'a [PostEntry], focus_index: Option<usize>) -> Vec<&'a PostEntry> {
+fn get_page_entries<'a>(
+    entries: &'a [PostEntry],
+    focus_index: Option<usize>,
+) -> Vec<&'a PostEntry> {
     let len = entries.len();
     if len == 0 {
         return vec![];
@@ -272,7 +280,13 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
         let page_entries = get_page_entries(&posts, None);
         let content = render_entry_list_content(&page_entries, "最近の記事", "/");
         let nav = render_nav_entry_list();
-        let html = render_page("blog.bouzuya.net", "https://blog.bouzuya.net/", "", &nav, &content);
+        let html = render_page(
+            "blog.bouzuya.net",
+            "https://blog.bouzuya.net/",
+            "",
+            &nav,
+            &content,
+        );
         write_html(&out_dir, "/", &html)?;
     }
 
@@ -284,7 +298,11 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
         // entry-detail ページ
         {
             let prev = if i > 0 { Some(&posts[i - 1]) } else { None };
-            let next = if i + 1 < posts.len() { Some(&posts[i + 1]) } else { None };
+            let next = if i + 1 < posts.len() {
+                Some(&posts[i + 1])
+            } else {
+                None
+            };
             let nav = render_nav_entry_detail(prev, next, &date);
             let content = render_entry_detail_content(detail, &date);
             let title = format!("{} {}", detail.date, detail.title);
@@ -295,7 +313,11 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
 
             // idTitle ページ（entry-detail と同内容）
             let id_title = find_id_title(&out_dir, &date).unwrap_or_else(|| "diary".to_string());
-            let id_title_path = format!("{}{}/", path.trim_end_matches('/'), format!("/{}", id_title));
+            let id_title_path = format!(
+                "{}{}/",
+                path.trim_end_matches('/'),
+                format!("/{}", id_title)
+            );
             write_html(&out_dir, &id_title_path, &html)?;
         }
 
@@ -330,7 +352,10 @@ mod tests {
 
     #[test]
     fn test_html_escape() {
-        assert_eq!(html_escape("<a>&\"b\"</a>"), "&lt;a&gt;&amp;&quot;b&quot;&lt;/a&gt;");
+        assert_eq!(
+            html_escape("<a>&\"b\"</a>"),
+            "&lt;a&gt;&amp;&quot;b&quot;&lt;/a&gt;"
+        );
     }
 
     #[test]

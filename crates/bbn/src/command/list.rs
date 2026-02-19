@@ -13,7 +13,8 @@ pub struct Command {
     pub query: Option<String>,
 }
 use bbn_data::EntryId;
-use bbn_repository::{BbnRepository, Query};
+use bbn_repository::BbnRepository;
+use bbn_repository::Query;
 use std::convert::TryFrom;
 
 impl Command {

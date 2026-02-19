@@ -4,8 +4,12 @@ use std::path::Path;
 
 use crate::rule::Rule;
 use anyhow::anyhow;
-use pulldown_cmark::{BrokenLink, Options, Parser};
-use std::{collections::BTreeSet, convert::TryFrom, fs};
+use pulldown_cmark::BrokenLink;
+use pulldown_cmark::Options;
+use pulldown_cmark::Parser;
+use std::collections::BTreeSet;
+use std::convert::TryFrom;
+use std::fs;
 
 fn broken_links(content: &str) -> Vec<String> {
     let mut res = vec![];

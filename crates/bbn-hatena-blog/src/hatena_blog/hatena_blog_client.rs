@@ -1,8 +1,11 @@
 use crate::hatena_blog::HatenaBlogEntryId;
-use hatena_blog_api::{
-    Client, Config, CreateEntryResponse, EntryId, EntryParams, GetEntryResponse,
-    UpdateEntryResponse,
-};
+use hatena_blog_api::Client;
+use hatena_blog_api::Config;
+use hatena_blog_api::CreateEntryResponse;
+use hatena_blog_api::EntryId;
+use hatena_blog_api::EntryParams;
+use hatena_blog_api::GetEntryResponse;
+use hatena_blog_api::UpdateEntryResponse;
 
 use crate::hatena_blog::HatenaBlogListEntriesResponse;
 

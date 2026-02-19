@@ -1,5 +1,7 @@
 use anyhow::Context;
-use chrono::{DateTime, Local, TimeZone};
+use chrono::DateTime;
+use chrono::Local;
+use chrono::TimeZone;
 use date_range::date::Date;
 
 use crate::config_repository::ConfigRepository;
@@ -22,7 +24,14 @@ pub struct Command {
 
 impl Command {
     pub async fn handle(self) -> anyhow::Result<()> {
-        view(self.content, self.date, self.hatena_blog_id, self.meta, self.web).await
+        view(
+            self.content,
+            self.date,
+            self.hatena_blog_id,
+            self.meta,
+            self.web,
+        )
+        .await
     }
 }
 

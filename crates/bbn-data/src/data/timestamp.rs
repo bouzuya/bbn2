@@ -1,4 +1,5 @@
-use limited_date_time::{Instant, OffsetDateTime};
+use limited_date_time::Instant;
+use limited_date_time::OffsetDateTime;
 use std::str::FromStr;
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]

@@ -1,4 +1,5 @@
-use crate::data::{EntryId, EntryMeta};
+use crate::data::EntryId;
+use crate::data::EntryMeta;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Entry {

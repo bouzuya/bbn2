@@ -1,16 +1,19 @@
 use anyhow::Context;
 use bbn_data::EntryKey;
-use bbn_repository::{BbnRepository, Query};
-use pulldown_cmark::{Parser, html};
+use bbn_repository::BbnRepository;
+use bbn_repository::Query;
+use pulldown_cmark::Parser;
+use pulldown_cmark::html;
 use regex::Regex;
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    convert::TryFrom,
-    fs::{self, File},
-    io::BufWriter,
-    path::{Path, PathBuf},
-    str::FromStr,
-};
+use std::collections::BTreeMap;
+use std::collections::BTreeSet;
+use std::convert::TryFrom;
+use std::fs::File;
+use std::fs::{self};
+use std::io::BufWriter;
+use std::path::Path;
+use std::path::PathBuf;
+use std::str::FromStr;
 
 // <https://github.com/bouzuya/kraken/tree/v4.0.2/doc#all-json>
 // all json (`/posts.json`)

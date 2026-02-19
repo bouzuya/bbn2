@@ -2,7 +2,8 @@ use std::path::PathBuf;
 
 use anyhow::Context;
 
-use crate::{config::Config, config_repository::ConfigRepository};
+use crate::config::Config;
+use crate::config_repository::ConfigRepository;
 
 #[derive(Debug, clap::Args)]
 pub struct Command {
@@ -24,7 +25,11 @@ impl Command {
     }
 }
 
-fn config(data_dir: PathBuf, hatena_blog_data_file: PathBuf, out_dir: Option<PathBuf>) -> anyhow::Result<()> {
+fn config(
+    data_dir: PathBuf,
+    hatena_blog_data_file: PathBuf,
+    out_dir: Option<PathBuf>,
+) -> anyhow::Result<()> {
     // FIXME: Add argument to add link_completion_rules_file
     let config_repository = ConfigRepository::new()?;
     let config = Config::new(data_dir, hatena_blog_data_file, None, out_dir);

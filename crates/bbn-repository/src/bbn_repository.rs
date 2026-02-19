@@ -1,18 +1,23 @@
-use std::{
-    convert::TryFrom,
-    ffi::OsStr,
-    fs, io,
-    path::{Path, PathBuf},
-    str::FromStr,
-};
+use std::convert::TryFrom;
+use std::ffi::OsStr;
+use std::fs;
+use std::io;
+use std::path::Path;
+use std::path::PathBuf;
+use std::str::FromStr;
 
 use anyhow::Context;
-use date_range::date::{Date, YearMonth};
-use serde::{Deserialize, Serialize};
+use date_range::date::Date;
+use date_range::date::YearMonth;
+use serde::Deserialize;
+use serde::Serialize;
 use thiserror::Error;
 
 use crate::query::Query;
-use bbn_data::{DateTime, Entry, EntryId, EntryMeta};
+use bbn_data::DateTime;
+use bbn_data::Entry;
+use bbn_data::EntryId;
+use bbn_data::EntryMeta;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 struct MetaJson {
@@ -274,11 +279,13 @@ fn list_posts_day(path: &Path, query: &Query) -> Result<Vec<Post>, ListPostsErro
 
 #[cfg(test)]
 mod tests {
-    use std::{convert::TryFrom, fs};
+    use std::convert::TryFrom;
+    use std::fs;
 
     use tempfile::tempdir;
 
-    use bbn_data::{DateTime, EntryId};
+    use bbn_data::DateTime;
+    use bbn_data::EntryId;
 
     use super::*;
 

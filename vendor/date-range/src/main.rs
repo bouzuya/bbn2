@@ -1,4 +1,7 @@
-use date_range::{self, DateRange, InputFormat, OutputFormat};
+use date_range::DateRange;
+use date_range::InputFormat;
+use date_range::OutputFormat;
+use date_range::{self};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]

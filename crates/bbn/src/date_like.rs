@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
-use time::{format_description, Date};
+use time::Date;
+use time::format_description;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DateLike(date_range::date::Date);
@@ -18,7 +19,9 @@ impl FromStr for DateLike {
         let calendar_date_format = format_description::parse(
             "[year base:calendar repr:full]-[month padding:zero repr:numerical]-[day padding:zero]",
         )?;
-        let week_date_format = format_description::parse("[year base:iso_week repr:full]-W[week_number padding:zero repr:iso]-[weekday repr:monday one_indexed:true]")?;
+        let week_date_format = format_description::parse(
+            "[year base:iso_week repr:full]-W[week_number padding:zero repr:iso]-[weekday repr:monday one_indexed:true]",
+        )?;
         Date::parse(s, &week_date_format)
             .map_err(|e| anyhow::anyhow!(e))
             .and_then(|d| {
@@ -46,10 +49,10 @@ impl FromStr for DateLike {
 
 #[cfg(test)]
 mod tests {
-    use time::{
-        format_description::{self},
-        Date, Month, Weekday,
-    };
+    use time::Date;
+    use time::Month;
+    use time::Weekday;
+    use time::format_description::{self};
 
     use super::*;
 
@@ -94,7 +97,9 @@ mod tests {
 
     #[test]
     fn test_week_date_format() -> anyhow::Result<()> {
-        let week_date_format = format_description::parse("[year base:iso_week repr:full]-W[week_number padding:zero repr:iso]-[weekday repr:monday one_indexed:true]")?;
+        let week_date_format = format_description::parse(
+            "[year base:iso_week repr:full]-W[week_number padding:zero repr:iso]-[weekday repr:monday one_indexed:true]",
+        )?;
         let test_cases = vec![
             (
                 Date::from_iso_week_date(2023, 27, Weekday::Wednesday)?,

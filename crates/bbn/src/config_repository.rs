@@ -1,13 +1,15 @@
-use std::{
-    env, fs,
-    path::{Path, PathBuf},
-};
+use std::env;
+use std::fs;
+use std::path::Path;
+use std::path::PathBuf;
 
 use anyhow::Context;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 use xdg::BaseDirectories;
 
-use crate::{config::Config, credentials::Credentials};
+use crate::config::Config;
+use crate::credentials::Credentials;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ConfigJson {

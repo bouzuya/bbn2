@@ -1,9 +1,11 @@
 use std::convert::TryInto;
 
-use hatena_blog_api::{Entry, ListEntriesResponse};
+use hatena_blog_api::Entry;
+use hatena_blog_api::ListEntriesResponse;
 
 use crate::hatena_blog::HatenaBlogEntryId;
-use bbn_data::{DateTime, Timestamp};
+use bbn_data::DateTime;
+use bbn_data::Timestamp;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct HatenaBlogListEntriesResponse(String);

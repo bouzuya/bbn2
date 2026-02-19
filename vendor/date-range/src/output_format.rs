@@ -1,4 +1,5 @@
-use crate::{week_date::WeekDate, DateRange};
+use crate::week_date::WeekDate;
+use crate::DateRange;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum OutputFormat {

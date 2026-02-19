@@ -1,4 +1,6 @@
-use hatena_blog_api::{Entry, EntryId, FixedDateTime};
+use hatena_blog_api::Entry;
+use hatena_blog_api::EntryId;
+use hatena_blog_api::FixedDateTime;
 
 use crate::hatena_blog::HatenaBlogEntryId;
 use bbn_data::DateTime;

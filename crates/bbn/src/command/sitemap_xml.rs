@@ -1,4 +1,6 @@
-use std::{fs::File, io::BufWriter, path::PathBuf};
+use std::fs::File;
+use std::io::BufWriter;
+use std::path::PathBuf;
 
 #[derive(Debug, clap::Args)]
 pub struct Command {
@@ -6,8 +8,10 @@ pub struct Command {
 }
 
 use anyhow::Context;
-use bbn_repository::{BbnRepository, Query};
-use sitemap_xml_writer::{SitemapWriter, Url};
+use bbn_repository::BbnRepository;
+use bbn_repository::Query;
+use sitemap_xml_writer::SitemapWriter;
+use sitemap_xml_writer::Url;
 
 use crate::config_repository::ConfigRepository;
 

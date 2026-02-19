@@ -2,7 +2,8 @@ use anyhow::Context;
 
 use crate::config_repository::ConfigRepository;
 use bbn_hatena_blog::HatenaBlogRepository;
-use bbn_repository::{BbnRepository, Query};
+use bbn_repository::BbnRepository;
+use bbn_repository::Query;
 use std::convert::TryFrom;
 
 #[derive(Debug, clap::Args)]

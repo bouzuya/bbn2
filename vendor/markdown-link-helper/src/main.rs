@@ -1,5 +1,7 @@
-use markdown_link_helper::{build_rules, run};
-use std::{fs, path::PathBuf};
+use markdown_link_helper::build_rules;
+use markdown_link_helper::run;
+use std::fs;
+use std::path::PathBuf;
 
 #[derive(Debug, clap::Parser)]
 #[command(author, version, about, long_about = None)]

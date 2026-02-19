@@ -1,4 +1,5 @@
-use crate::hatena_blog::{HatenaBlogEntryId, MemberRequestId};
+use crate::hatena_blog::HatenaBlogEntryId;
+use crate::hatena_blog::MemberRequestId;
 use bbn_data::Timestamp;
 
 #[derive(Clone, Debug, Eq, PartialEq)]

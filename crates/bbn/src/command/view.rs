@@ -1,4 +1,5 @@
-use crate::{config_repository::ConfigRepository, date_like::DateLike};
+use crate::config_repository::ConfigRepository;
+use crate::date_like::DateLike;
 
 #[derive(Debug, clap::Args)]
 pub struct Command {
@@ -14,7 +15,8 @@ pub struct Command {
     pub web: bool,
 }
 use anyhow::Context;
-use bbn_data::{EntryId, EntryMeta};
+use bbn_data::EntryId;
+use bbn_data::EntryMeta;
 use bbn_repository::BbnRepository;
 use date_range::date::Date;
 use serde::Serialize;

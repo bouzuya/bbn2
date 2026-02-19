@@ -1,8 +1,10 @@
-use crate::{
-    date::{Date, Year, YearMonth},
-    InputFormat,
-};
-use chrono::{Datelike, NaiveDate, Weekday};
+use crate::date::Date;
+use crate::date::Year;
+use crate::date::YearMonth;
+use crate::InputFormat;
+use chrono::Datelike;
+use chrono::NaiveDate;
+use chrono::Weekday;
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct DateRange {

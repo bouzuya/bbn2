@@ -1,14 +1,25 @@
 use crate::config_repository::ConfigRepository;
 use anyhow::Context;
-use bbn_data::{DateTime, EntryId, EntryMeta, Timestamp};
-use bbn_hatena_blog::{
-    download_entry, HatenaBlogClient, HatenaBlogEntry, HatenaBlogRepository, IndexingId,
-};
+use bbn_data::DateTime;
+use bbn_data::EntryId;
+use bbn_data::EntryMeta;
+use bbn_data::Timestamp;
+use bbn_hatena_blog::HatenaBlogClient;
+use bbn_hatena_blog::HatenaBlogEntry;
+use bbn_hatena_blog::HatenaBlogRepository;
+use bbn_hatena_blog::IndexingId;
+use bbn_hatena_blog::download_entry;
 use bbn_repository::BbnRepository;
-use chrono::{Local, NaiveDateTime, TimeZone};
+use chrono::Local;
+use chrono::NaiveDateTime;
+use chrono::TimeZone;
 use date_range::date::Date;
-use hatena_blog_api::{Entry, GetEntryResponse};
-use std::{collections::BTreeSet, convert::TryFrom, str::FromStr, time::Duration};
+use hatena_blog_api::Entry;
+use hatena_blog_api::GetEntryResponse;
+use std::collections::BTreeSet;
+use std::convert::TryFrom;
+use std::str::FromStr;
+use std::time::Duration;
 use tokio::time::sleep;
 
 #[derive(Debug, clap::Args)]

@@ -1,4 +1,5 @@
-use clap_complete::{Shell, generate};
+use clap_complete::Shell;
+use clap_complete::generate;
 use std::io;
 
 #[derive(Debug, clap::Args)]

@@ -1,13 +1,13 @@
 use std::ffi::OsStr;
 
-use nom::{
-    branch::alt,
-    bytes::complete::{tag, take_while_m_n},
-    character::complete::char,
-    combinator::{all_consuming, map},
-    sequence::tuple,
-    IResult,
-};
+use nom::IResult;
+use nom::branch::alt;
+use nom::bytes::complete::tag;
+use nom::bytes::complete::take_while_m_n;
+use nom::character::complete::char;
+use nom::combinator::all_consuming;
+use nom::combinator::map;
+use nom::sequence::tuple;
 use thiserror::Error;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -80,26 +80,26 @@ pub struct DateRange<'a>(DateRangeDate<'a>, DateRangeDate<'a>);
 impl<'a> DateRange<'a> {
     fn match_year(&self, year: &OsStr) -> bool {
         year.to_str()
-            .map(|y| (self.0 .0..=self.1 .0).contains(&y))
+            .map(|y| (self.0.0..=self.1.0).contains(&y))
             .unwrap_or(false)
     }
 
     fn match_month(&self, month: &OsStr) -> bool {
-        if self.0 .0 != self.1 .0 {
+        if self.0.0 != self.1.0 {
             return true;
         }
         month
             .to_str()
-            .map(|m| (self.0 .1..=self.1 .1).contains(&m))
+            .map(|m| (self.0.1..=self.1.1).contains(&m))
             .unwrap_or(false)
     }
 
     fn match_day(&self, day: &OsStr) -> bool {
-        if self.0 .0 != self.1 .0 || self.0 .1 != self.1 .1 {
+        if self.0.0 != self.1.0 || self.0.1 != self.1.1 {
             return true;
         }
         day.to_str()
-            .map(|d| (self.0 .2..=self.1 .2).contains(&d))
+            .map(|d| (self.0.2..=self.1.2).contains(&d))
             .unwrap_or(false)
     }
 
