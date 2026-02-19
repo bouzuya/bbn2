@@ -26,6 +26,9 @@ fn test_bbn_build_html() -> anyhow::Result<()> {
     let content2 = entry_dir.join("2021-02-04.md");
     fs::write(content2, "good bye")?;
 
+    let out_dir = temp_dir.path().join("out");
+    fs::create_dir_all(out_dir.as_path())?;
+
     let hatena_blog_data_file = temp_dir.path().join("hatena-blog.db");
     Command::cargo_bin("bbn")?
         .arg("config")
@@ -33,25 +36,25 @@ fn test_bbn_build_html() -> anyhow::Result<()> {
         .arg(&data_dir)
         .arg("--hatena-blog-data-file")
         .arg(&hatena_blog_data_file)
-        .env("BBN_TEST_CONFIG_DIR", config_dir.as_path())
-        .assert()
-        .success();
-
-    let out_dir = temp_dir.path().join("out");
-    fs::create_dir_all(out_dir.as_path())?;
-
-    // build-json を実行
-    Command::cargo_bin("bbn")?
-        .arg("build-json")
+        .arg("--out-dir")
         .arg(out_dir.as_path())
         .env("BBN_TEST_CONFIG_DIR", config_dir.as_path())
         .assert()
         .success();
 
-    // build-html を実行
+    // build --json を実行
     Command::cargo_bin("bbn")?
-        .arg("build-html")
-        .arg(out_dir.as_path())
+        .arg("build")
+        .arg("--json")
+        .env("BBN_TEST_CONFIG_DIR", config_dir.as_path())
+        .assert()
+        .success();
+
+    // build --html を実行
+    Command::cargo_bin("bbn")?
+        .arg("build")
+        .arg("--html")
+        .env("BBN_TEST_CONFIG_DIR", config_dir.as_path())
         .assert()
         .success();
 

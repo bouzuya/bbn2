@@ -8,17 +8,9 @@ use std::{
     convert::TryFrom,
     fs::{self, File},
     io::BufWriter,
-    path::PathBuf,
+    path::{Path, PathBuf},
+    str::FromStr,
 };
-
-#[derive(Debug, clap::Args)]
-pub struct Command {
-    pub out_dir: PathBuf,
-}
-
-use std::{path::Path, str::FromStr};
-
-use crate::config_repository::ConfigRepository;
 
 // <https://github.com/bouzuya/kraken/tree/v4.0.2/doc#all-json>
 // all json (`/posts.json`)
@@ -169,19 +161,7 @@ fn parse_links(markdown: &str) -> anyhow::Result<BTreeSet<EntryKey>> {
     Ok(links)
 }
 
-impl Command {
-    pub fn handle(self) -> anyhow::Result<()> {
-        run(self.out_dir)
-    }
-}
-
-fn run(out_dir: PathBuf) -> anyhow::Result<()> {
-    let config_repository = ConfigRepository::new()?;
-    let config = config_repository
-        .load()
-        .context("The configuration file does not found. Use `bbn config` command.")?;
-    let data_dir = config.data_dir().to_path_buf();
-
+pub fn run(data_dir: PathBuf, out_dir: PathBuf) -> anyhow::Result<()> {
     let bbn_repository = BbnRepository::new(data_dir);
     let query = Query::try_from("date:1970-01-01/9999-12-31")?;
     let mut entry_ids = bbn_repository.find_ids_by_query(query)?;

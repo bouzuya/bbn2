@@ -1,5 +1,4 @@
-mod build_html;
-mod build_json;
+mod build;
 mod completion;
 mod config;
 mod date_range;
@@ -17,10 +16,8 @@ pub struct Command {
 
 #[derive(Debug, clap::Subcommand)]
 enum Subcommand {
-    /// Builds HTML files
-    BuildHtml(build_html::Command),
-    /// Builds JSON files
-    BuildJson(build_json::Command),
+    /// Builds blog files (JSON and/or HTML)
+    Build(build::Command),
     /// Prints the shell's completion script
     Completion(completion::Command),
     /// Updates the configuration file
@@ -42,8 +39,7 @@ enum Subcommand {
 impl Command {
     pub async fn handle(self) -> anyhow::Result<()> {
         match self.subcommand {
-            Subcommand::BuildHtml(command) => command.handle(),
-            Subcommand::BuildJson(command) => command.handle(),
+            Subcommand::Build(command) => command.handle(),
             Subcommand::Completion(command) => command.handle::<Command>(),
             Subcommand::Config(command) => command.handle(),
             Subcommand::DateRange(command) => command.handle(),

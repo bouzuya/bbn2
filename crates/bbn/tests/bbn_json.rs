@@ -33,6 +33,9 @@ fn test_bbn_json() -> anyhow::Result<()> {
     let content20210203 = entry_dir.join("2021-02-04.md");
     fs::write(content20210203, r#"good bye"#)?;
 
+    let out_dir = temp_dir.path().join("out");
+    fs::create_dir_all(out_dir.as_path())?;
+
     let hatena_blog_data_file = temp_dir.path().join("hatena-blog.db");
     Command::cargo_bin("bbn")?
         .arg("config")
@@ -40,16 +43,15 @@ fn test_bbn_json() -> anyhow::Result<()> {
         .arg(data_dir)
         .arg("--hatena-blog-data-file")
         .arg(hatena_blog_data_file)
+        .arg("--out-dir")
+        .arg(out_dir.as_path())
         .env("BBN_TEST_CONFIG_DIR", config_dir.as_path())
         .assert()
         .success();
 
-    let out_dir = temp_dir.path().join("out");
-    fs::create_dir_all(out_dir.as_path())?;
-
     Command::cargo_bin("bbn")?
-        .arg("build-json")
-        .arg(out_dir.as_path())
+        .arg("build")
+        .arg("--json")
         .env("BBN_TEST_CONFIG_DIR", config_dir)
         .assert()
         .success();

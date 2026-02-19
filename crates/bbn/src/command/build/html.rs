@@ -5,11 +5,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-#[derive(Debug, clap::Args)]
-pub struct Command {
-    pub out_dir: PathBuf,
-}
-
 #[derive(serde::Deserialize)]
 struct PostEntry {
     date: String,
@@ -246,13 +241,7 @@ fn find_id_title(out_dir: &Path, date: &DateParts) -> Option<String> {
     None
 }
 
-impl Command {
-    pub fn handle(self) -> anyhow::Result<()> {
-        run(self.out_dir)
-    }
-}
-
-fn run(out_dir: PathBuf) -> anyhow::Result<()> {
+pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
     // posts.json を読み込み
     let posts_path = out_dir.join("posts.json");
     let file = File::open(&posts_path)
