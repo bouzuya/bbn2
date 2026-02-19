@@ -14,6 +14,7 @@ struct ConfigJson {
     data_dir: PathBuf,
     hatena_blog_data_file: PathBuf,
     link_completion_rules_file: Option<PathBuf>,
+    out_dir: Option<PathBuf>,
 }
 
 impl From<ConfigJson> for Config {
@@ -22,6 +23,7 @@ impl From<ConfigJson> for Config {
             config_json.data_dir,
             config_json.hatena_blog_data_file,
             config_json.link_completion_rules_file,
+            config_json.out_dir,
         )
     }
 }
@@ -34,6 +36,7 @@ impl From<Config> for ConfigJson {
             link_completion_rules_file: config
                 .link_completion_rules_file()
                 .map(|it| it.to_path_buf()),
+            out_dir: config.out_dir().map(|it| it.to_path_buf()),
         }
     }
 }
@@ -185,10 +188,12 @@ mod tests {
         fs::create_dir_all(config_dir.as_path())?;
         let config_file = config_dir.join("config.json");
 
+        let out_dir = temp_dir.path().join("out");
         let config = Config::new(
             data_dir.clone(),
             hatena_blog_data_file.clone(),
             Some(link_completion_rules_file.clone()),
+            Some(out_dir.clone()),
         );
 
         temp_env::with_var(
@@ -204,14 +209,15 @@ mod tests {
                 assert_eq!(
                     saved,
                     format!(
-                        r#"{{"data_dir":"{}","hatena_blog_data_file":"{}","link_completion_rules_file":"{}"}}"#,
+                        r#"{{"data_dir":"{}","hatena_blog_data_file":"{}","link_completion_rules_file":"{}","out_dir":"{}"}}"#,
                         data_dir.to_str().context("data_dir.to_str()")?,
                         hatena_blog_data_file
                             .to_str()
                             .context("hatena_blog_data_file.to_str()")?,
                         link_completion_rules_file
                             .to_str()
-                            .context("link_completion_rules_file.to_str()")?
+                            .context("link_completion_rules_file.to_str()")?,
+                        out_dir.to_str().context("out_dir.to_str()")?
                     )
                 );
 

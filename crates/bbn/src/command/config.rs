@@ -14,18 +14,20 @@ pub struct Command {
         help = "the hatena-blog data file"
     )]
     pub hatena_blog_data_file: PathBuf,
+    #[arg(long = "out-dir", name = "OUT_DIR", help = "the out dir")]
+    pub out_dir: Option<PathBuf>,
 }
 
 impl Command {
     pub fn handle(self) -> anyhow::Result<()> {
-        config(self.data_dir, self.hatena_blog_data_file)
+        config(self.data_dir, self.hatena_blog_data_file, self.out_dir)
     }
 }
 
-fn config(data_dir: PathBuf, hatena_blog_data_file: PathBuf) -> anyhow::Result<()> {
+fn config(data_dir: PathBuf, hatena_blog_data_file: PathBuf, out_dir: Option<PathBuf>) -> anyhow::Result<()> {
     // FIXME: Add argument to add link_completion_rules_file
     let config_repository = ConfigRepository::new()?;
-    let config = Config::new(data_dir, hatena_blog_data_file, None);
+    let config = Config::new(data_dir, hatena_blog_data_file, None, out_dir);
     config_repository.save(config)?;
     println!(
         "The configuration has been written to {}",
