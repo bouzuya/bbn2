@@ -16,10 +16,7 @@ pub struct Command {
     pub out_dir: PathBuf,
 }
 
-use std::{
-    path::Path,
-    str::FromStr,
-};
+use std::{path::Path, str::FromStr};
 
 use crate::config_repository::ConfigRepository;
 
@@ -31,8 +28,6 @@ pub struct AllJson(pub Vec<AllJsonItem>);
 #[derive(serde::Serialize)]
 pub struct AllJsonItem {
     pub date: String, // "YYYY-MM-DD"
-    #[serde(skip_serializing)]
-    pub id_title: Option<String>, // "title" (obsolete)
     pub minutes: u32,
     pub pubdate: String, // "YYYY-MM-DDTHH:MM:SSZ"
     pub tags: Vec<String>,
@@ -212,7 +207,6 @@ fn run(out_dir: PathBuf) -> anyhow::Result<()> {
 
         let all_json_item = AllJsonItem {
             date: entry_id.date().to_string(),
-            id_title: entry_id.id_title().map(|s| s.to_owned()),
             minutes: u32::try_from(meta.minutes)?,
             pubdate: meta.pubdate.to_string(),
             tags: meta.tags.clone(),
