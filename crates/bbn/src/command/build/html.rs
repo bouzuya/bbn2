@@ -1,4 +1,5 @@
 use anyhow::Context;
+use askama::Template;
 use std::fs::File;
 use std::fs::{self};
 use std::io::BufReader;
@@ -54,79 +55,118 @@ fn entry_path(date: &DateParts) -> String {
 }
 
 fn og_description(data: &str) -> String {
-    let desc: String = data.chars().take(100).collect();
-    html_escape(&desc)
+    data.chars().take(100).collect()
 }
 
-fn html_escape(s: &str) -> String {
-    s.replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;")
-        .replace('"', "&quot;")
+#[derive(Template)]
+#[template(path = "page.html")]
+struct PageTemplate {
+    canonical_url: String,
+    content: String,
+    description: String,
+    nav: String,
+    title: String,
+}
+
+#[derive(Template)]
+#[template(path = "nav_entry_detail.html")]
+struct NavEntryDetailTemplate {
+    dd: String,
+    mm: String,
+    next_path: Option<String>,
+    prev_path: Option<String>,
+    yyyy: String,
+}
+
+#[derive(Template)]
+#[template(path = "entry_detail_content.html")]
+struct EntryDetailContentTemplate {
+    date_str: String,
+    html: String,
+    path: String,
+    pubdate: String,
+    title: String,
+}
+
+struct EntryListItem {
+    date_str: String,
+    path: String,
+    title: String,
+}
+
+#[derive(Template)]
+#[template(path = "entry_list_content.html")]
+struct EntryListContentTemplate {
+    items: Vec<EntryListItem>,
+    list_title: String,
+    list_url: String,
 }
 
 fn render_nav_entry_detail(
     prev: Option<&PostEntry>,
     next: Option<&PostEntry>,
     date: &DateParts,
-) -> String {
-    let mut nav = String::from("<nav class=\"nav\">");
-    if let Some(prev) = prev {
-        let prev_date = parse_date(&prev.date).unwrap();
-        nav.push_str(&format!(
-            "<a class=\"nav-prev\" href=\"{}\">prev</a>",
-            entry_path(&prev_date)
-        ));
+) -> anyhow::Result<String> {
+    let prev_path = prev
+        .map(|p| parse_date(&p.date))
+        .transpose()?
+        .map(|d| entry_path(&d));
+    let next_path = next
+        .map(|n| parse_date(&n.date))
+        .transpose()?
+        .map(|d| entry_path(&d));
+    NavEntryDetailTemplate {
+        prev_path,
+        next_path,
+        yyyy: date.yyyy.clone(),
+        mm: date.mm.clone(),
+        dd: date.dd.clone(),
     }
-    nav.push_str(&format!(
-        "<a class=\"nav-list\" href=\"/{}/{}/{}/related/\">list</a>",
-        date.yyyy, date.mm, date.dd
-    ));
-    if let Some(next) = next {
-        let next_date = parse_date(&next.date).unwrap();
-        nav.push_str(&format!(
-            "<a class=\"nav-next\" href=\"{}\">next</a>",
-            entry_path(&next_date)
-        ));
-    }
-    nav.push_str("</nav>");
-    nav
+    .render()
+    .context("nav_entry_detail テンプレートのレンダリングに失敗")
 }
 
 fn render_nav_entry_list() -> String {
     String::new()
 }
 
-fn render_entry_detail_content(detail: &EntryDetail, date: &DateParts) -> String {
+fn render_entry_detail_content(detail: &EntryDetail, date: &DateParts) -> anyhow::Result<String> {
     let path = entry_path(date);
-    format!(
-        r#"<div class="entry-detail"><article class="entry"><header class="header"><h1 class="id-title"><a href="{path}"><span class="id">{date_str}</span><span class="separator"> </span><span class="title">{title}</span></a></h1></header><div class="body"><section class="content">{html}</section></div><footer class="footer"><a class="permalink" href="{path}"><time class="pubdate" datetime="{pubdate}">{pubdate}</time></a></footer></article></div>"#,
-        path = path,
-        date_str = html_escape(&detail.date),
-        title = html_escape(&detail.title),
-        html = detail.html,
-        pubdate = html_escape(&detail.pubdate),
-    )
+    EntryDetailContentTemplate {
+        path,
+        date_str: detail.date.clone(),
+        title: detail.title.clone(),
+        html: detail.html.clone(),
+        pubdate: detail.pubdate.clone(),
+    }
+    .render()
+    .context("entry_detail_content テンプレートのレンダリングに失敗")
 }
 
-fn render_entry_list_content(entries: &[&PostEntry], list_title: &str, list_url: &str) -> String {
-    let mut items = String::new();
-    for entry in entries {
-        let date = parse_date(&entry.date).unwrap();
-        let path = entry_path(&date);
-        items.push_str(&format!(
-            r#"<li class="entry-list-item"><div class="entry"><a href="{path}"><span class="id">{date_str}</span><span class="separator"> </span><span class="title">{title}</span></a></div></li>"#,
-            path = path,
-            date_str = html_escape(&entry.date),
-            title = html_escape(&entry.title),
-        ));
+fn render_entry_list_content(
+    entries: &[&PostEntry],
+    list_title: &str,
+    list_url: &str,
+) -> anyhow::Result<String> {
+    let items = entries
+        .iter()
+        .map(|entry| {
+            let date = parse_date(&entry.date)?;
+            let path = entry_path(&date);
+            Ok(EntryListItem {
+                path,
+                date_str: entry.date.clone(),
+                title: entry.title.clone(),
+            })
+        })
+        .collect::<anyhow::Result<Vec<_>>>()?;
+    EntryListContentTemplate {
+        list_url: list_url.to_string(),
+        list_title: list_title.to_string(),
+        items,
     }
-    format!(
-        r#"<div class="entry-list"><nav><header class="header"><h1><a href="{list_url}">{list_title}</a></h1></header><div class="body"><ul class="entry-list">{items}</ul></div><footer class="footer"></footer></nav></div>"#,
-        list_url = html_escape(list_url),
-        list_title = html_escape(list_title),
-        items = items,
-    )
+    .render()
+    .context("entry_list_content テンプレートのレンダリングに失敗")
 }
 
 fn render_page(
@@ -135,50 +175,16 @@ fn render_page(
     description: &str,
     nav: &str,
     content: &str,
-) -> String {
-    format!(
-        r##"<!DOCTYPE html>
-<html lang="ja" prefix="og: http://ogp.me/ns#">
-<head>
-<meta charset="UTF-8">
-<title>{title} - blog.bouzuya.net</title>
-<meta name="robots" content="index, follow">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@bouzuya">
-<meta name="twitter:creator" content="@bouzuya">
-<meta property="og:title" content="{og_title}">
-<meta property="og:url" content="{canonical_url}">
-<meta property="og:image" content="https://blog.bouzuya.net/images/favicon.png">
-<meta property="og:description" content="{description}">
-<meta property="og:site_name" content="blog.bouzuya.net">
-<meta name="theme-color" content="#4e6a41">
-<link rel="alternate" type="application/atom+xml" href="/atom.xml">
-<link rel="icon" sizes="192x192" href="https://blog.bouzuya.net/images/favicon.png">
-<link rel="apple-touch-icon" sizes="192x192" href="https://blog.bouzuya.net/images/favicon.png">
-</head>
-<body>
-<div class="app">
-<header class="header">
-<h1 class="title"><a href="/">blog.bouzuya.net</a></h1>
-{nav}
-</header>
-<div class="body">
-{content}
-</div>
-<footer class="footer">
-{nav}
-</footer>
-</div>
-</body>
-</html>"##,
-        title = html_escape(title),
-        og_title = html_escape(title),
-        canonical_url = html_escape(canonical_url),
-        description = description,
-        nav = nav,
-        content = content,
-    )
+) -> anyhow::Result<String> {
+    PageTemplate {
+        title: title.to_string(),
+        canonical_url: canonical_url.to_string(),
+        description: description.to_string(),
+        nav: nav.to_string(),
+        content: content.to_string(),
+    }
+    .render()
+    .context("page テンプレートのレンダリングに失敗")
 }
 
 fn write_html(out_dir: &Path, path: &str, html: &str) -> anyhow::Result<()> {
@@ -278,7 +284,7 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
     // ルートページ（最新エントリ一覧）
     {
         let page_entries = get_page_entries(&posts, None);
-        let content = render_entry_list_content(&page_entries, "最近の記事", "/");
+        let content = render_entry_list_content(&page_entries, "最近の記事", "/")?;
         let nav = render_nav_entry_list();
         let html = render_page(
             "blog.bouzuya.net",
@@ -286,7 +292,7 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             "",
             &nav,
             &content,
-        );
+        )?;
         write_html(&out_dir, "/", &html)?;
     }
 
@@ -303,12 +309,12 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             } else {
                 None
             };
-            let nav = render_nav_entry_detail(prev, next, &date);
-            let content = render_entry_detail_content(detail, &date);
+            let nav = render_nav_entry_detail(prev, next, &date)?;
+            let content = render_entry_detail_content(detail, &date)?;
             let title = format!("{} {}", detail.date, detail.title);
             let canonical_url = format!("https://blog.bouzuya.net{}", path);
             let description = og_description(&detail.data);
-            let html = render_page(&title, &canonical_url, &description, &nav, &content);
+            let html = render_page(&title, &canonical_url, &description, &nav, &content)?;
             write_html(&out_dir, &path, &html)?;
 
             // idTitle ページ（entry-detail と同内容）
@@ -326,11 +332,11 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             let page_entries = get_page_entries(&posts, Some(i));
             let list_title = format!("{} {} の関連記事", detail.date, detail.title);
             let list_url = format!("{}related/", path);
-            let content = render_entry_list_content(&page_entries, &list_title, &list_url);
+            let content = render_entry_list_content(&page_entries, &list_title, &list_url)?;
             let nav = render_nav_entry_list();
             let title = format!("{} {} の関連記事", detail.date, detail.title);
             let canonical_url = format!("https://blog.bouzuya.net{}related/", path);
-            let html = render_page(&title, &canonical_url, "", &nav, &content);
+            let html = render_page(&title, &canonical_url, "", &nav, &content)?;
             write_html(&out_dir, &format!("{}related/", path), &html)?;
         }
     }
@@ -348,14 +354,6 @@ mod tests {
         assert_eq!(date.yyyy, "2024");
         assert_eq!(date.mm, "01");
         assert_eq!(date.dd, "15");
-    }
-
-    #[test]
-    fn test_html_escape() {
-        assert_eq!(
-            html_escape("<a>&\"b\"</a>"),
-            "&lt;a&gt;&amp;&quot;b&quot;&lt;/a&gt;"
-        );
     }
 
     #[test]

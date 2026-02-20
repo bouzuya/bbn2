@@ -1,0 +1,21 @@
+<div class="entry-detail">
+    <article class="entry">
+        <header class="header">
+            <h1 class="id-title">
+                <a href="{{ path }}">
+                    <span class="id">{{ date_str }}</span>
+                    <span class="separator"></span>
+                    <span class="title">{{ title }}</span>
+                </a>
+            </h1>
+        </header>
+        <div class="body">
+            <section class="content">{{ html|safe }}</section>
+        </div>
+        <footer class="footer">
+            <a class="permalink" href="{{ path }}">
+                <time class="pubdate" datetime="{{ pubdate }}">{{ pubdate }}</time>
+            </a>
+        </footer>
+    </article>
+</div>

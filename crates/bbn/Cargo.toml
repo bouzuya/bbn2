@@ -7,6 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = { workspace = true }
+askama = "0.15"
 bbn-data = { workspace = true }
 bbn-hatena-blog = { workspace = true }
 bbn-repository = { workspace = true }

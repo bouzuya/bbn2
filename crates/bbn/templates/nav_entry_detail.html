@@ -1,0 +1,11 @@
+<nav class="nav">
+    <ul>
+        {% if let Some(prev) = prev_path %}
+        <li><a class="nav-prev" href="{{ prev }}">prev</a></li>
+        {% endif %}
+        <li><a class="nav-list" href="/{{ yyyy }}/{{ mm }}/{{ dd }}/related/">related</a></li>
+        {% if let Some(next) = next_path %}
+        <li><a class="nav-next" href="{{ next }}">next</a></li>
+        {% endif %}
+    </ul>
+</nav>

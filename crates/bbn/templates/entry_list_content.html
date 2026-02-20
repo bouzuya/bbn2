@@ -1,0 +1,23 @@
+<div class="entry-list">
+    <nav>
+        <header class="header">
+            <h1><a href="{{ list_url }}">{{ list_title }}</a></h1>
+        </header>
+        <div class="body">
+            <ul class="entry-list">
+                {% for item in items %}
+                <li class="entry-list-item">
+                    <div class="entry">
+                        <a href="{{ item.path }}">
+                            <span class="id">{{ item.date_str }}</span>
+                            <span class="separator"></span>
+                            <span class="title">{{ item.title }}</span>
+                        </a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <footer class="footer"></footer>
+    </nav>
+</div>
