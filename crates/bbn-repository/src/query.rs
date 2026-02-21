@@ -1,13 +1,13 @@
 use std::ffi::OsStr;
 
 use nom::IResult;
+use nom::Parser;
 use nom::branch::alt;
 use nom::bytes::complete::tag;
 use nom::bytes::complete::take_while_m_n;
 use nom::character::complete::char;
 use nom::combinator::all_consuming;
 use nom::combinator::map;
-use nom::sequence::tuple;
 use thiserror::Error;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -170,22 +170,24 @@ fn is_digit(c: char) -> bool {
 
 fn date_range_date(s: &str) -> IResult<&str, DateRangeDate> {
     map(
-        tuple((
+        (
             take_while_m_n(4, 4, is_digit),
             char('-'),
             take_while_m_n(2, 2, is_digit),
             char('-'),
             take_while_m_n(2, 2, is_digit),
-        )),
+        ),
         |(y, _, m, _, d)| DateRangeDate(y, m, d),
-    )(s)
+    )
+    .parse(s)
 }
 
 fn date_range(s: &str) -> IResult<&str, DateRange> {
     map(
-        tuple((date_range_date, char('/'), date_range_date)),
+        (date_range_date, char('/'), date_range_date),
         |(d1, _, d2)| DateRange(d1, d2),
-    )(s)
+    )
+    .parse(s)
 }
 
 fn yyyymmdd(s: &str) -> IResult<&str, Date> {
@@ -243,7 +245,8 @@ fn parse(s: &str) -> IResult<&str, Query> {
         map(alt((yyyymmdd, yyyymm, yyyy, mmdd, mm, dd)), |d| {
             Query::Date(d)
         }),
-    )))(s)?;
+    )))
+    .parse(s)?;
     Ok((s, date))
 }
 

@@ -78,7 +78,9 @@ impl ConfigRepository {
         let prefix = "net.bouzuya.rust-sandbox.bbn";
         Ok(Self(match env::var_os("BBN_TEST_CONFIG_DIR") {
             Some(test_config_dir) => PathBuf::from(test_config_dir),
-            None => BaseDirectories::with_prefix(prefix)?.get_config_home(),
+            None => BaseDirectories::with_prefix(prefix)
+                .get_config_home()
+                .context("config home directory not found")?,
         }))
     }
 

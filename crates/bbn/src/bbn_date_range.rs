@@ -1,6 +1,7 @@
 use date_range::date::Date;
 use date_range::week_date::WeekDate;
 use nom::IResult;
+use nom::Parser;
 use nom::bytes::complete::take_while_m_n;
 use nom::character::complete::char;
 use nom::combinator::all_consuming;
@@ -16,7 +17,8 @@ fn year_month(s: &str) -> IResult<&str, (&str, &str)> {
         take_while_m_n(4, 4, is_digit),
         char('-'),
         take_while_m_n(2, 2, is_digit),
-    ))(s)
+    ))
+    .parse(s)
 }
 
 fn week_range_try_from_month(m: &str) -> Option<(&str, &str)> {
