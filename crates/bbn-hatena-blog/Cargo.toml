@@ -10,6 +10,7 @@ bbn-data = { workspace = true }
 bbn-repository = { workspace = true }
 date-range = { workspace = true }
 hatena-blog-api = { workspace = true }
+libsqlite3-sys = { version = "0.24", features = ["bundled"] }
 sqlx = { version = "0.5.5", features = ["runtime-tokio-rustls", "sqlite"] }
 thiserror = { workspace = true }
 
