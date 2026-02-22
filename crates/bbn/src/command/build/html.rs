@@ -350,16 +350,18 @@ pub fn run(out_dir: PathBuf, verbose: bool) -> anyhow::Result<()> {
         }
     }
 
-    // public ディレクトリ内の静的ファイルを out_dir に出力
-    for file in PUBLIC_DIR.files() {
-        let dest = out_dir.join(file.path());
-        if let Some(parent) = dest.parent() {
-            fs::create_dir_all(parent)?;
-        }
-        let mut f = File::create(&dest)?;
-        f.write_all(file.contents())?;
-        if verbose {
-            println!("{}", dest.display());
+    // public ディレクトリ内のファイル・ディレクトリを再帰的に out_dir に出力
+    for entry in PUBLIC_DIR.find("**/*")? {
+        let entry_path = entry.path();
+        if let Some(file) = entry.as_file() {
+            let out_path = out_dir.join(entry_path);
+            if let Some(parent) = out_path.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::write(&out_path, file.contents())?;
+            if verbose {
+                println!("{}", out_path.display());
+            }
         }
     }
 
