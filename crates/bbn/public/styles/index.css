@@ -74,12 +74,20 @@ body {
         margin: 0;
     }
 
-    & .nav a {
-        color: var(--color-black);
+    & .nav li {
         font-size: var(--size-s);
         font-weight: normal;
-        text-decoration: none;
+    }
+
+    & .nav li .nav-next-placeholder,
+    & .nav li .nav-prev-placeholder {
+        text-decoration: line-through;
+    }
+
+    & .nav li a {
+        color: var(--color-black);
         border-bottom: 1px solid var(--color-black);
+        text-decoration: none;
 
         &:hover {
             border-bottom: 1px dotted var(--color-green);
@@ -336,11 +344,19 @@ body {
         margin: 0;
     }
 
-    & .nav a {
-        border-bottom: 1px solid var(--color-black);
-        color: var(--color-black);
+    & .nav li {
         font-size: var(--size-s);
         font-weight: normal;
+    }
+
+    & .nav li .nav-next-placeholder,
+    & .nav li .nav-prev-placeholder {
+        text-decoration: line-through;
+    }
+
+    & .nav li a {
+        color: var(--color-black);
+        border-bottom: 1px solid var(--color-black);
         text-decoration: none;
 
         &:hover {
