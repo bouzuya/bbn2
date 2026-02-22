@@ -190,7 +190,7 @@ fn render_page(
     .context("page テンプレートのレンダリングに失敗")
 }
 
-fn write_html(out_dir: &Path, path: &str, html: &str) -> anyhow::Result<()> {
+fn write_html(out_dir: &Path, path: &str, html: &str, verbose: bool) -> anyhow::Result<()> {
     // path は "/" で始まり "/" で終わる想定
     // index.html を出力
     let index_path = out_dir
@@ -201,6 +201,9 @@ fn write_html(out_dir: &Path, path: &str, html: &str) -> anyhow::Result<()> {
     }
     let mut file = File::create(&index_path)?;
     file.write_all(html.as_bytes())?;
+    if verbose {
+        println!("{}", index_path.display());
+    }
 
     // ルートパス以外は .html も出力
     if path != "/" {
@@ -211,6 +214,9 @@ fn write_html(out_dir: &Path, path: &str, html: &str) -> anyhow::Result<()> {
         }
         let mut file = File::create(&html_path)?;
         file.write_all(html.as_bytes())?;
+        if verbose {
+            println!("{}", html_path.display());
+        }
     }
 
     Ok(())
@@ -258,7 +264,7 @@ fn find_id_title(out_dir: &Path, date: &DateParts) -> Option<String> {
     None
 }
 
-pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
+pub fn run(out_dir: PathBuf, verbose: bool) -> anyhow::Result<()> {
     // posts.json を読み込み
     let posts_path = out_dir.join("posts.json");
     let file = File::open(&posts_path)
@@ -296,7 +302,7 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             &nav,
             &content,
         )?;
-        write_html(&out_dir, "/", &html)?;
+        write_html(&out_dir, "/", &html, verbose)?;
     }
 
     // 各エントリのページ
@@ -318,7 +324,7 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             let canonical_url = format!("https://blog.bouzuya.net{}", path);
             let description = og_description(&detail.data);
             let html = render_page(&title, &canonical_url, &description, &nav, &content)?;
-            write_html(&out_dir, &path, &html)?;
+            write_html(&out_dir, &path, &html, verbose)?;
 
             // idTitle ページ（entry-detail と同内容）
             let id_title = find_id_title(&out_dir, &date).unwrap_or_else(|| "diary".to_string());
@@ -327,7 +333,7 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
                 path.trim_end_matches('/'),
                 format!("/{}", id_title)
             );
-            write_html(&out_dir, &id_title_path, &html)?;
+            write_html(&out_dir, &id_title_path, &html, verbose)?;
         }
 
         // entry-list (related) ページ
@@ -340,7 +346,7 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             let title = format!("{} {} の関連記事", detail.date, detail.title);
             let canonical_url = format!("https://blog.bouzuya.net{}related/", path);
             let html = render_page(&title, &canonical_url, "", &nav, &content)?;
-            write_html(&out_dir, &format!("{}related/", path), &html)?;
+            write_html(&out_dir, &format!("{}related/", path), &html, verbose)?;
         }
     }
 
@@ -352,6 +358,9 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
         }
         let mut f = File::create(&dest)?;
         f.write_all(file.contents())?;
+        if verbose {
+            println!("{}", dest.display());
+        }
     }
 
     Ok(())

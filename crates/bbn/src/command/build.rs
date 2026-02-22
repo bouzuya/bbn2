@@ -11,6 +11,8 @@ pub struct Command {
     html: bool,
     #[arg(long = "json", help = "Builds JSON files")]
     json: bool,
+    #[arg(long = "verbose", help = "Prints written file paths to stdout")]
+    verbose: bool,
 }
 
 impl Command {
@@ -31,10 +33,10 @@ impl Command {
 
         if run_json {
             let data_dir = config.data_dir().to_path_buf();
-            self::json::run(data_dir, out_dir.clone())?;
+            self::json::run(data_dir, out_dir.clone(), self.verbose)?;
         }
         if run_html {
-            self::html::run(out_dir)?;
+            self::html::run(out_dir, self.verbose)?;
         }
 
         Ok(())

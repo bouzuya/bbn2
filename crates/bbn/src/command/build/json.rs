@@ -54,15 +54,18 @@ pub struct TagsJsonItem {
     pub count: u32,
 }
 
-fn write_all_json(out_dir: &Path, all_json: &AllJson) -> anyhow::Result<()> {
+fn write_all_json(out_dir: &Path, all_json: &AllJson, verbose: bool) -> anyhow::Result<()> {
     let path = out_dir.join("posts.json");
-    let file = File::create(path)?;
+    let file = File::create(&path)?;
     let writer = BufWriter::new(file);
     serde_json::to_writer(writer, all_json)?;
+    if verbose {
+        println!("{}", path.display());
+    }
     Ok(())
 }
 
-fn write_daily_json(out_dir: &Path, daily_json: &DailyJson) -> anyhow::Result<()> {
+fn write_daily_json(out_dir: &Path, daily_json: &DailyJson, verbose: bool) -> anyhow::Result<()> {
     let date = daily_json.date.split('-').collect::<Vec<&str>>();
     let yyyy = date[0];
     let mm = date[1];
@@ -79,9 +82,12 @@ fn write_daily_json(out_dir: &Path, daily_json: &DailyJson) -> anyhow::Result<()
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent)?;
         }
-        let file = File::create(path)?;
+        let file = File::create(&path)?;
         let writer = BufWriter::new(file);
         serde_json::to_writer(writer, daily_json)?;
+        if verbose {
+            println!("{}", path.display());
+        }
     }
     Ok(())
 }
@@ -101,6 +107,7 @@ fn write_related_json(
     out_dir: &Path,
     date: &str,
     related_json: &RelatedJson,
+    verbose: bool,
 ) -> anyhow::Result<()> {
     let parts = date.split('-').collect::<Vec<&str>>();
     let yyyy = parts[0];
@@ -115,9 +122,12 @@ fn write_related_json(
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent)?;
         }
-        let file = File::create(path)?;
+        let file = File::create(&path)?;
         let writer = BufWriter::new(file);
         serde_json::to_writer(writer, related_json)?;
+        if verbose {
+            println!("{}", path.display());
+        }
     }
     Ok(())
 }
@@ -125,6 +135,7 @@ fn write_related_json(
 fn write_linked_json(
     out_dir: &Path,
     inbounds: &BTreeMap<EntryKey, BTreeSet<EntryKey>>,
+    verbose: bool,
 ) -> anyhow::Result<()> {
     let mut linked = BTreeMap::new();
     for (k, v) in inbounds.iter() {
@@ -134,17 +145,23 @@ fn write_linked_json(
         );
     }
     let path = out_dir.join("linked.json");
-    let file = File::create(path)?;
+    let file = File::create(&path)?;
     let writer = BufWriter::new(file);
     serde_json::to_writer(writer, &linked)?;
+    if verbose {
+        println!("{}", path.display());
+    }
     Ok(())
 }
 
-fn write_tags_json(out_dir: &Path, tags_json: &TagsJson) -> anyhow::Result<()> {
+fn write_tags_json(out_dir: &Path, tags_json: &TagsJson, verbose: bool) -> anyhow::Result<()> {
     let path = out_dir.join("tags.json");
-    let file = File::create(path)?;
+    let file = File::create(&path)?;
     let writer = BufWriter::new(file);
     serde_json::to_writer(writer, tags_json)?;
+    if verbose {
+        println!("{}", path.display());
+    }
     Ok(())
 }
 
@@ -164,7 +181,7 @@ fn parse_links(markdown: &str) -> anyhow::Result<BTreeSet<EntryKey>> {
     Ok(links)
 }
 
-pub fn run(data_dir: PathBuf, out_dir: PathBuf) -> anyhow::Result<()> {
+pub fn run(data_dir: PathBuf, out_dir: PathBuf, verbose: bool) -> anyhow::Result<()> {
     let bbn_repository = BbnRepository::new(data_dir);
     let query = Query::try_from("date:1970-01-01/9999-12-31")?;
     let mut entry_ids = bbn_repository.find_ids_by_query(query)?;
@@ -208,7 +225,7 @@ pub fn run(data_dir: PathBuf, out_dir: PathBuf) -> anyhow::Result<()> {
             tags: meta.tags,
             title: meta.title,
         };
-        write_daily_json(out_dir.as_path(), &daily_json)?;
+        write_daily_json(out_dir.as_path(), &daily_json, verbose)?;
 
         for link in links.iter().cloned() {
             inbounds
@@ -292,13 +309,13 @@ pub fn run(data_dir: PathBuf, out_dir: PathBuf) -> anyhow::Result<()> {
             prev,
             same,
         };
-        write_related_json(out_dir.as_path(), date, &related_json)?;
+        write_related_json(out_dir.as_path(), date, &related_json, verbose)?;
     }
 
     fs::create_dir_all(out_dir.as_path())?;
-    write_all_json(out_dir.as_path(), &all_json)?;
-    write_tags_json(out_dir.as_path(), &tags_json)?;
-    write_linked_json(out_dir.as_path(), &inbounds)?;
+    write_all_json(out_dir.as_path(), &all_json, verbose)?;
+    write_tags_json(out_dir.as_path(), &tags_json, verbose)?;
+    write_linked_json(out_dir.as_path(), &inbounds, verbose)?;
     Ok(())
 }
 
