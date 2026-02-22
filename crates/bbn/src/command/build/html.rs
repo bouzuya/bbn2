@@ -1,11 +1,14 @@
 use anyhow::Context;
 use askama::Template;
+use include_dir::{Dir, include_dir};
 use std::fs::File;
 use std::fs::{self};
 use std::io::BufReader;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
+
+static PUBLIC_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/public");
 
 #[derive(serde::Deserialize)]
 struct PostEntry {
@@ -339,6 +342,16 @@ pub fn run(out_dir: PathBuf) -> anyhow::Result<()> {
             let html = render_page(&title, &canonical_url, "", &nav, &content)?;
             write_html(&out_dir, &format!("{}related/", path), &html)?;
         }
+    }
+
+    // public ディレクトリ内の静的ファイルを out_dir に出力
+    for file in PUBLIC_DIR.files() {
+        let dest = out_dir.join(file.path());
+        if let Some(parent) = dest.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        let mut f = File::create(&dest)?;
+        f.write_all(file.contents())?;
     }
 
     Ok(())

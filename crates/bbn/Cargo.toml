@@ -19,6 +19,7 @@ date-range = { workspace = true }
 dialoguer = "0.12.0"
 diff = "0.1.13"
 hatena-blog-api = { workspace = true }
+include_dir = "0.7"
 markdown-link-helper = { workspace = true }
 nom = { workspace = true }
 open = "5.3.3"
