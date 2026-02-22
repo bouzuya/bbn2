@@ -278,6 +278,7 @@ dependencies = [
  "bbn-repository",
  "date-range",
  "hatena-blog-api",
+ "libsqlite3-sys",
  "sqlx",
  "tempfile",
  "thiserror 2.0.18",

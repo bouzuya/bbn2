@@ -2,6 +2,9 @@
 members = ["crates/*"]
 resolver = "2"
 
+[workspace.package]
+version = "0.41.0"
+
 [workspace.dependencies]
 anyhow = "1.0.102"
 bbn-data = { path = "./crates/bbn-data" }
