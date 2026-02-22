@@ -10,9 +10,6 @@ use bbn_hatena_blog::HatenaBlogRepository;
 use bbn_hatena_blog::IndexingId;
 use bbn_hatena_blog::download_entry;
 use bbn_repository::BbnRepository;
-use chrono::Local;
-use chrono::NaiveDateTime;
-use chrono::TimeZone;
 use date_range::date::Date;
 use hatena_blog_api::Entry;
 use hatena_blog_api::GetEntryResponse;
@@ -161,9 +158,8 @@ async fn update_bbn_entries(
         .find_entries_updated_and_title()
         .await?
     {
-        let utc_naive_date_time = NaiveDateTime::from_timestamp(i64::from(updated), 0);
-        let fixed_datetime = Local.from_utc_datetime(&utc_naive_date_time);
-        let datetime = DateTime::from_str(&fixed_datetime.to_rfc3339())?;
+        let timestamp = Timestamp::try_from(i64::from(updated))?;
+        let datetime = DateTime::local_from_timestamp(timestamp);
         let date = Date::from_str(datetime.to_string().get(0..10).unwrap())?;
         let entry_id = match bbn_repository.find_id_by_date(date)? {
             None => EntryId::new(date, None),

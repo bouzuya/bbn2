@@ -232,7 +232,6 @@ dependencies = [
  "bbn-data",
  "bbn-hatena-blog",
  "bbn-repository",
- "chrono",
  "clap 4.5.60",
  "clap_complete",
  "console",

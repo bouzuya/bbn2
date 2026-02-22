@@ -11,7 +11,6 @@ askama = "0.15"
 bbn-data = { workspace = true }
 bbn-hatena-blog = { workspace = true }
 bbn-repository = { workspace = true }
-chrono = { workspace = true }
 clap = { version = "4.5.60", features = ["derive", "env"] }
 clap_complete = "4.5.66"
 console = "0.16.2"

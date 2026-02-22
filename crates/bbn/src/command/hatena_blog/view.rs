@@ -1,7 +1,5 @@
 use anyhow::Context;
-use chrono::DateTime;
-use chrono::Local;
-use chrono::TimeZone;
+use bbn_data::Timestamp;
 use date_range::date::Date;
 
 use crate::config_repository::ConfigRepository;
@@ -62,13 +60,16 @@ async fn view(
         .find_entry_by_updated(bbn_entry_meta.pubdate.into())
         .await?
         .context("no hatena-blog entry")?;
-    let updated = DateTime::parse_from_rfc3339(&hatena_blog_entry.updated.to_string())?;
-    // TODO: get offset from options
-    let local = Local.from_utc_datetime(&updated.naive_utc());
+    let updated = Timestamp::from_rfc3339(&hatena_blog_entry.updated.to_string())?;
     let url = format!(
         "https://{}/entry/{}",
         hatena_blog_id,
-        local.format("%Y/%m/%d/%H%M%S")
+        updated
+            .to_rfc3339()
+            .replace("T", "")
+            .replace("Z", "")
+            .replace(":", "")
+            .replace("-", "/")
     );
     if web {
         open::that(url)?;
