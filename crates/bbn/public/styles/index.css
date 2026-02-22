@@ -1,0 +1,351 @@
+:root {
+    --color-black: hsl(100, 23%, 4%);
+    --color-blue: hsl(234, 100%, 50%);
+    --color-gray: hsla(100, 23%, 4%, 0.5);
+    --color-green: #4e6a41;
+    --color-white: hsl(100, 23%, 96%);
+
+    --size-xxl: 24px;
+    --size-xl: 20px;
+    --size-l: 18px;
+    --size-m: 16px;
+    --size-s: 14px;
+    --size-xs: 12px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    align-items: center;
+    background: var(--color-white);
+    color: var(--color-black);
+    display: flex;
+    flex-flow: column nowrap;
+    font-family: sans-serif;
+    font-size: var(--size-m);
+    font-weight: normal;
+    line-height: 1.75;
+    margin: 0;
+}
+
+.app {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 32px;
+    max-width: 720px;
+    min-height: 100vh;
+    min-width: 360px;
+    width: 100%;
+}
+
+.app>.header {
+    align-items: center;
+    border-bottom: 1px solid var(--color-green);
+    display: flex;
+    flex-flow: row nowrap;
+    flex: none;
+    height: 48px;
+    justify-content: space-between;
+
+    & .title {
+        font-size: var(--size-l);
+        font-weight: bold;
+        margin: 0;
+    }
+
+    & .title a {
+        color: var(--color-black);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-green);
+        }
+    }
+
+    & .nav ul {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 16px;
+        list-style-type: none;
+        margin: 0;
+    }
+
+    & .nav a {
+        color: var(--color-black);
+        font-size: var(--size-s);
+        font-weight: normal;
+        text-decoration: none;
+        border-bottom: 1px solid var(--color-black);
+
+        &:hover {
+            border-bottom: 1px dotted var(--color-green);
+            color: var(--color-green);
+        }
+    }
+}
+
+.app>.body {
+    flex: 1;
+}
+
+.entry-detail>.entry {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 24px;
+}
+
+.entry-detail>.entry>.header {
+    & h1 {
+        font-size: var(--size-xl);
+        font-weight: bold;
+        margin: 0;
+    }
+
+    & h1 a {
+        color: var(--color-black);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-green);
+        }
+    }
+
+    & h1 .id {
+        color: var(--color-gray);
+        display: block;
+        font-size: var(--size-s);
+        font-weight: normal;
+    }
+
+    & h1 .separator {
+        display: none;
+    }
+
+    & h1 .title {
+        display: block;
+        font-size: var(--size-xl);
+        font-weight: bold;
+    }
+}
+
+.entry-detail>.entry>.body {
+    & .content {
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 12px;
+    }
+
+    & a {
+        border-bottom: 1px solid var(--color-blue);
+        color: var(--color-blue);
+        text-decoration: none;
+    }
+
+    & a:hover {
+        border-bottom: 1px dotted var(--color-blue);
+    }
+
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6 {
+        margin: 0;
+        padding: 0;
+    }
+
+    & h1 {
+        font-size: var(--size-xxl);
+        font-weight: bold;
+    }
+
+    & h2 {
+        font-size: var(--size-xl);
+        font-weight: bold;
+    }
+
+    & h3 {
+        font-size: var(--size-l);
+        font-weight: bold;
+    }
+
+    & h4,
+    & h5,
+    & h6 {
+        font-size: var(--size-m);
+        font-weight: normal;
+    }
+
+    & hr {
+        &::before {
+            border-color: var(--color-gray);
+            border-style: dashed;
+            border-width: 0 0 1px 0;
+            content: "";
+            display: block;
+            width: 32px;
+        }
+
+        border-width: 0;
+        margin: 0;
+        padding: 16px 0;
+    }
+
+    & blockquote {
+        border-left: 4px solid var(--color-black);
+        margin: 0;
+        padding: 8px 12px;
+    }
+
+    & p {
+        margin: 0;
+    }
+
+    & pre {
+        background: var(--color-black);
+        border-radius: 4px;
+        color: var(--color-white);
+        overflow-x: auto;
+        padding: 8px 16px;
+    }
+
+    & code {
+        background: var(--color-black);
+        border-radius: 4px;
+        color: var(--color-white);
+        font-family: monospace;
+        font-size: var(--size-xs);
+        font-weight: normal;
+        padding: 2px 4px;
+    }
+
+    & pre code {
+        background: none;
+        border: none;
+        border-radius: 0;
+        font-size: inherit;
+        font-weight: inherit;
+        padding: 0;
+    }
+
+    & ul,
+    & ol {
+        margin: 0;
+        padding: 0 0 0 16px;
+    }
+
+    & img {
+        height: auto;
+        max-width: 100%;
+    }
+}
+
+.entry-detail>.entry>.footer {
+    & a.permalink {
+        color: var(--color-gray);
+        font-size: var(--size-s);
+        font-weight: normal;
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-green);
+        }
+    }
+}
+
+.entry-list>nav {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 24px;
+}
+
+.entry-list .header {
+    & h1 {
+        color: var(--color-black);
+        font-size: var(--size-xl);
+        font-weight: bold;
+    }
+
+    & h1 a {
+        color: var(--color-black);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-green);
+        }
+    }
+}
+
+.entry-list .body {
+    .entry-list {
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 16px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .entry a {
+        align-items: baseline;
+        color: var(--color-black);
+        display: flex;
+        gap: 12px;
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-green);
+        }
+    }
+
+    .entry .id {
+        color: var(--color-gray);
+        font-size: var(--size-s);
+        font-weight: normal;
+        white-space: nowrap;
+    }
+
+    .entry .separator {
+        display: none;
+    }
+
+    .entry .title {
+        font-size: var(--size-l);
+        font-weight: bold;
+    }
+}
+
+.app>.footer {
+    align-items: center;
+    border-top: 1px solid var(--color-green);
+    display: flex;
+    flex-flow: row nowrap;
+    height: 48px;
+    justify-content: flex-end;
+
+    & .nav ul {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 16px;
+        list-style-type: none;
+        margin: 0;
+    }
+
+    & .nav a {
+        border-bottom: 1px solid var(--color-black);
+        color: var(--color-black);
+        font-size: var(--size-s);
+        font-weight: normal;
+        text-decoration: none;
+
+        &:hover {
+            border-bottom: 1px dotted var(--color-green);
+            color: var(--color-green);
+        }
+    }
+}
