@@ -3,7 +3,7 @@ members = ["crates/*"]
 resolver = "2"
 
 [workspace.package]
-version = "0.41.0"
+version = "0.41.1"
 
 [workspace.dependencies]
 anyhow = "1.0.102"
@@ -12,7 +12,9 @@ bbn-hatena-blog = { path = "./crates/bbn-hatena-blog" }
 bbn-repository = { path = "./crates/bbn-repository" }
 chrono = "0.4.43"
 date-range = { path = "./vendor/date-range" }
-hatena-blog-api = { git = "https://github.com/bouzuya/rust-hatena-blog-api", tag = "0.2.0", features = ["rustls-tls"] }
+hatena-blog-api = { git = "https://github.com/bouzuya/rust-hatena-blog-api", tag = "0.2.0", features = [
+    "rustls-tls",
+] }
 markdown-link-helper = { path = "./vendor/markdown-link-helper" }
 nom = "8.0.0"
 serde = { version = "1.0.228", features = ["derive"] }
